@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Body>
+  <Geometry>
+    <Parameters R1="1" R2="2" Nx="10" Ny="10"></Parameters>
+    <Points p="4">
+      <point id="1" address="R1,0" />
+      <point id="2" address="R2,0" />
+      <point id="3" address="0,R2" />
+      <point id="4" address="0,R1" />
+    </Points>
+    <Lines l="4">
+      <line id="1" connectivity="1,2" type="segment" degree="Nx" />
+      <line id="2" connectivity="2,3" type="arcc" degree="Ny" CenterPoint="0,0" />
+      <line id="3" connectivity="4,3" type="segment" degree="Nx" />
+      <line id="4" connectivity="1,4" type="arcc" degree="Ny" CenterPoint="0,0" />
+    </Lines>
+    <Elements el="1">
+      <inLines>
+        <line_element id="1" connectivity="1,2,3,4" />
+      </inLines>
+      <inPoints>
+        <point_element id="1" connectivity="1,2,3,4" />
+      </inPoints>
+    </Elements>
+  </Geometry>
+  <Physics>
+    <PhysicalParameters mu0="1" J="5*pi*4e-7" Js="2e-3" mur="1000" />
+    <Regions nR="1">
+      <region id="1" name="coilN" CurrentDensity="J" MagneticMaterial="mu0" ElementList="1"></region>
+    </Regions>
+    <BoundaryConditions dir_points="1,2,3,4" dir_lines="1,2,3,4">
+      <ImposedFlux>
+        <boundary lines="2" value="1" />
+      </ImposedFlux>
+    </BoundaryConditions>
+  </Physics>
+</Body>
