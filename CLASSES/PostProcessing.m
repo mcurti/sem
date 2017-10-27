@@ -412,7 +412,7 @@ classdef PostProcessing
                        if abs(round(csi_i,6)) <= 1 && ...
                                   abs(round(eta_i,6)) <= 1 && exitflag > 0
                           [X, Y] = meshgrid(csi, eta);
-                          lxy        = PolynomialInterp12D(csi_i,eta_i,X,Y);
+                          lxy        = PolynomialInterp2D(csi_i,eta_i,X,Y);
            
                           SEM.potential(ii)   = lxy*obj.Potential{jj}(:);
                           SEM.abs_Flux(ii)    = lxy*obj.Flux.abs{jj}(:);
