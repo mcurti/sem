@@ -1,3 +1,11 @@
+%==========================================================================
+% Geometry.m
+% Created: 27.10.2017 - 17:11:51
+% By: M. Curti
+%
+% The Geometry file which takes the geometry info from the XML file and is
+% storing it in cells. Also it builds the geometry and metrics
+%==========================================================================
 classdef Geometry
     %GEOMETRY Builds the geometry according to the geometry xml file
     %   The input of the class is the geometry file
