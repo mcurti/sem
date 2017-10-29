@@ -13,30 +13,21 @@ Find a demo project in DEMOS folder and run it
 What things you need to install the software and how to install them
 
 ```
-Give examples
+To have this application (looks more like a set of scripts) running, an instalation of MATLAB is necessary. No other additional toolboxes are needed.
 ```
 
 ### Installing
 
 A step by step series of examples that tell you have to get a development env running
 
-Say what the step will be
 
 ```
-Give the example
+The instalation is simple, copy the folders somewhere on your computer. Then add the directories into MATLAB via set path option, if not familiar with this, it is very easy to find on google.
 ```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+In the folder DEMOS, there is a demo file which can be used to run the app, and, hopefully gives an understanding on how the application works.
 
 ### Break down into end to end tests
 
