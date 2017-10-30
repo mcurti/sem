@@ -5,7 +5,7 @@
 %
 % Post processing of the obtained solution
 %==========================================================================
-classdef PostProcessing
+classdef PostProcessing < matlab.mixin.SetGet
     %PostProcessing Is taking the solution and extracting and reshaping the
     %solution
     %   Detailed explanation goes here
@@ -14,7 +14,7 @@ classdef PostProcessing
         PHI
         ProblemData
         xmlContent
-        Potential; Flux; Permeability
+        Potential; remPotential; Flux; Permeability
         mappings; metrics; lines; xi; elements; points
         FEM
     end
@@ -112,116 +112,6 @@ classdef PostProcessing
                 obj.Flux.abs{k} = abs(obj.Flux.x_comp{k} + ...
                                    1i*obj.Flux.y_comp{k});
             end
-%             
-%             % Post processing the derivatives based on boundary conditions
-%             
-%             % Adjusting the values on the lines
-%             shared_line = abs(obj.lines.shared_line);
-%             for k = 1:Nl
-%                 % Filter the lines which do not share two elements
-%                 if isempty(find(shared_line(k,:)==0,1)) == true
-%                     % Get the line values on both elements
-%                     el1 = shared_line(k,1); el2 = shared_line(k,2);
-%                     sd1 = shared_line(k,3); sd2 = shared_line(k,4);
-%                     
-%                     tmp1 = int_el(obj.Flux.x_comp{el1},'address');
-%                     tmp2 = int_el(obj.Flux.x_comp{el2},'address');
-%                     
-%                     b1 = tmp1{2}; b2 = tmp2{2};
-%                     
-%                     % Permeability values
-%                     line1_mu = obj.Permeability{el1}(b1{sd1});
-%                     line2_mu = obj.Permeability{el2}(b2{sd2});
-%                     
-%                     % Field values
-%                     line1_Bx = 1e3*obj.Flux.x_comp{el1}(b1{sd1});
-%                     line1_By = 1e3*obj.Flux.y_comp{el1}(b1{sd1});
-%                     
-%                     line2_Bx = 1e3*obj.Flux.x_comp{el2}(b2{sd2});
-%                     line2_By = 1e3*obj.Flux.y_comp{el2}(b2{sd2});
-%                     
-% %                     
-% %                     line1_B  = obj.Flux.abs{el1}(b1{sd1});
-% %                     line2_B  = obj.Flux.abs{el2}(b2{sd2});
-% %                     
-%                     
-%                     % Normal and tangent values
-%                     l1_nx = obj.metrics.N{1,el1}(b1{sd1});
-%                     l1_ny = obj.metrics.N{2,el1}(b1{sd1});
-%                     
-%                     l2_nx = obj.metrics.N{1,el2}(b2{sd2});
-%                     l2_ny = obj.metrics.N{2,el2}(b2{sd2});
-%                     
-%                     
-%                     % Compute the normal B and tangential H
-%                     
-%                     l1_Bn = line1_Bx.*l1_nx + line1_By.*l1_ny;
-%                     l2_Bn = line2_Bx.*l2_nx + line2_By.*l2_ny;
-%                     
-%                     l1_Ht = (line1_By.*l1_nx - line1_Bx.*l1_ny)./line1_mu;
-%                     l2_Ht = (line2_By.*l2_nx - line2_Bx.*l2_ny)./line2_mu;
-%                     
-%                      % Computing the average Bn, Ht, B and H
-% %                     
-%                     l_Bn  = mean([abs(l1_Bn); abs(l2_Bn)]);
-%                     
-%                     l_Ht  = mean([abs(l1_Ht); abs(l2_Ht)]);
-%                     
-%                     l1_B    = abs(l_Bn + l_Ht.*line1_mu*1i);
-%                     
-%                     l2_B    = abs(l_Bn + l_Ht.*line2_mu*1i);
-%                                    
-%                     obj.Flux.abs{el1}(b1{sd1}) = l1_B;
-%                     obj.Flux.abs{el2}(b2{sd2}) = l2_B;
-%                 end
-%             end
-%             
-%             % Adjusting the values on the points
-%             shared_point = obj.points.shared_point;
-%             for k = 1:Np
-%                 
-%                 % Filter the corner points
-%                 if numel(shared_point{1,k}) > 1
-%                     % Get the ids of the point k in all shared elements
-%                     elid = shared_point{1,k}; lid = shared_point{2,k};
-%                     
-%                     % Num
-%                     els = numel(lid); % Number of shared elements
-%                     
-%                     % Get the values of the k point on all shared elements
-%                     vpx = zeros(1,els); vpy = vpx; vpabs = vpx; vpmu = vpx;
-%                     pnx = vpx; pny = vpx;
-%                     
-%                     pid = zeros(els,4);
-%                     
-%                     for p = 1:els
-%                         eli = elid(p);
-%                         
-%                         tmp = int_el(obj.Flux.x_comp{eli},'address');
-%                         pid(p,:) = tmp{3};
-%                         
-%                         vpx(p)   = 1e3*obj.Flux.x_comp{eli}(pid(p,lid(p)));
-%                         vpy(p)   = 1e3*obj.Flux.y_comp{eli}(pid(p,lid(p)));                         
-%                         vpabs(p) =     obj.Flux.abs{eli}(pid(p,lid(p)));
-%                         
-%                         vpmu(p)  = obj.Permeability{eli}(pid(p,lid(p)));  
-%                         
-%                         
-%                         pnx(p) = obj.metrics.N{1,eli}(pid(p,lid(p)));
-%                         pny(p) = obj.metrics.N{2,eli}(pid(p,lid(p)));
-%                     end
-%                     
-%                     
-%                     % Compute the normal B and tangential H
-%                     
-%                     vpbn = vpx.*pnx + vpy.*pny;
-%                     vpht = (vpy.*pnx - vpx.*pny)./vpmu;
-%                     
-%                     vabs = abs(mean(abs(vpbn)) + mean(abs(vpht)).*vpmu*1i);
-%                     
-%                 end
-%             end
-                
             
         end
         %------------------------------------------------------------------
@@ -388,7 +278,7 @@ classdef PostProcessing
                     
                  
                     if max_dx > min_dx_FEM && max_dy > min_dy_FEM 
-                            
+                  
                        % Axes in the computational domain
                        csi = obj.xi.csi_for_all_lines{connectivity(1)};
                        eta = obj.xi.csi_for_all_lines{connectivity(2)};
@@ -552,6 +442,21 @@ classdef PostProcessing
                 end
             end
 
+        end
+        
+        %------------------------------------------------------------------
+        % Funciton to solve the flux linkage
+        %------------------------------------------------------------------
+        function [FL, remFL] = flux_linkage(obj,elements)
+            
+            FL = 0; remFL = 0;
+            
+            for k = elements
+                FL = FL + sum(obj.Potential{k}(:).*...
+                   obj.metrics.W{k}(:).*obj.metrics.J{k}(:));
+                remFL = remFL + sum(obj.remPotential{k}(:).*...
+                   obj.metrics.W{k}(:).*obj.metrics.J{k}(:));
+            end
         end
     end
     
