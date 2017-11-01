@@ -11,7 +11,7 @@ clear; clc;
 S = SEM('ISEF_corner.xml');
 
 % Preparing the current density vector
-J = linspace(.1,7,10);
+J = linspace(.1,7,10)*20;
 Flux = zeros(1,length(J)); remFlux = zeros(1,length(J));
 
 for k = 1:length(J)

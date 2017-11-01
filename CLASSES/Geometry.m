@@ -32,8 +32,24 @@ classdef Geometry
             obj.parameters = xml2matlab(A,'Parameters',0,'Attributes');
             % Loading the parameters in local workspace
             K = length(obj.parameters);
+            % Loading in the local workspace
+            
+            check_list = false(1,K);
+            
             for k = 1:K
-               eval([obj.parameters{k,1}, '=', obj.parameters{k,2}, ';']);
+                try
+                    eval([obj.parameters{k,1}, '=', ...
+                                               obj.parameters{k,2}, ';']);
+                catch
+                    check_list(k) = true;
+                end
+            end
+            check_list = find(check_list==true);
+            % running the parameters with errors
+            
+            for k = check_list
+                    eval([obj.parameters{k,1}, '=', ...
+                                               obj.parameters{k,2}, ';']);
             end
             % Evaluating the points
             %--------------------------------------------------------------
@@ -245,8 +261,8 @@ classdef Geometry
                 % element
                 % Masks for lines 1,3 and 2,4
                 [row, col] = size(temp_Xm); 
-                one_row = ones(row,1); %one_row([1, end]) = .5;
-                one_col = ones(1,col); %one_col([1, end]) = .5;
+                one_row = ones(row,1);
+                one_col = ones(1,col);
                 
                 L13mask = zeros(row, col); L13mask(1,1:end) = -one_col;
                 L13mask(end,1:end) = one_col;
@@ -269,9 +285,132 @@ classdef Geometry
                
                metrics.N{1,k}(c) = metrics.N{1,k}(c)./Ncabs;
                metrics.N{2,k}(c) = metrics.N{2,k}(c)./Ncabs;
+               
+               
             end
             
-            
+            % Evaluating the transformations if available
+            % Checking the number of transformations
+            try
+                nT = eval(['[',xml2matlab(A,'Transformations'...
+                    ,0,'nT','Attribute'),'];']);
+            catch
+            end
+                               
+            if exist('nT','var')
+                for t = 1:nT
+                    % Extracting the parameters for the transformation
+                    type = xml2matlab(A,'transformation'...
+                        ,t-1,'type','Attribute');
+                    if strcmp(type,'rotation')
+                        angle = eval(['[',xml2matlab(A,...
+                        'transformation',t-1,...
+                        'angle','Attribute'),'];']);
+                    end
+                    ElementList = eval(['[',xml2matlab(A,...
+                        'transformation',t-1,'ElementList','Attribute'),'];']);
+                    Copies = eval(['[',xml2matlab(A,...
+                        'transformation',t-1,'Copies','Attribute'),'];']);
+                    StartLine = eval(['[',xml2matlab(A,...
+                        'transformation',t-1,'StartLine','Attribute'),'];']);
+                    StartPoint = eval(['[',xml2matlab(A,...
+                        'transformation',t-1,'StartPoint','Attribute'),'];']);
+                    
+                    nEl = numel(ElementList);
+                    elements_lines  = obj.elements.lines(ElementList,:);
+                    elements_points = obj.elements.points(ElementList,:);
+                    
+                    inv_lines  = unique(elements_lines(:));
+                    inv_points = unique(elements_points(:));
+                    
+                    num_lines  = numel(inv_lines);
+                    num_points = numel(inv_points);
+                    % Initialising the new components of the geometry
+                    new_el_lines  = zeros(Copies*nEl,4);
+                    new_el_points = zeros(Copies*nEl,4);
+                    
+                    new_mappings.Xm      = cell(1,Copies*nEl);
+                    new_mappings.Ym      = cell(1,Copies*nEl);
+                    new_mappings.Xm_grid = cell(1,Copies*nEl);
+                    new_mappings.Ym_grid = cell(1,Copies*nEl);
+                    new_metrics.Xcsi     = cell(1,Copies*nEl);
+                    new_metrics.Ycsi     = cell(1,Copies*nEl);
+                    new_metrics.Xeta     = cell(1,Copies*nEl);
+                    new_metrics.Yeta     = cell(1,Copies*nEl);
+                    new_metrics.J        = cell(1,Copies*nEl);
+                    new_metrics.W        = cell(1,Copies*nEl);
+                    new_metrics.w_csi    = cell(1,Copies*nEl);
+                    new_metrics.w_eta    = cell(1,Copies*nEl);
+                    new_metrics.Lx       = cell(1,Copies*nEl);
+                    new_metrics.Ly       = cell(1,Copies*nEl);
+                    new_metrics.Lpx      = cell(1,Copies*nEl);
+                    new_metrics.Lpy      = cell(1,Copies*nEl);
+                    new_metrics.Neu1     = cell(1,Copies*nEl);
+                    new_metrics.Neu2     = cell(1,Copies*nEl);
+                    new_metrics.Neu      = cell(2,Copies*nEl);
+                    new_metrics.N1       = cell(2,Copies*nEl);
+                    new_metrics.N2       = cell(2,Copies*nEl);
+                    new_metrics.N        = cell(2,Copies*nEl);
+                    for c = 1:Copies
+                        new_el_lines((1:nEl) + nEl*(c-1),:) = ...
+                            obj.elements.lines + StartLine - 1;
+                        StartLine = StartLine + num_lines;
+                        
+                        new_el_points((1:nEl) + nEl*(c-1),:) = ...
+                            obj.elements.points + StartPoint - 1;
+                        StartPoint = StartPoint + num_points;
+                        
+                        for el = (1:nEl) + nEl*(c-1)
+                            old_id = el-nEl*(c-1);
+                            [TH, R] = cart2pol(mappings.Xm{old_id}...
+                                ,mappings.Ym{el-nEl*(c-1)});
+                            [Xm, Ym] = pol2cart(TH + angle*pi/180*c, R);
+                            
+                            new_mappings.Xm{el}   = Xm;
+                            new_mappings.Ym{el}   = Ym;
+                            new_metrics.Xcsi{el}  = metrics.Xcsi{old_id};
+                            new_metrics.Ycsi{el}  = metrics.Ycsi{old_id};
+                            new_metrics.Xeta{el}  = metrics.Xeta{old_id};
+                            new_metrics.Yeta{el}  = metrics.Yeta{old_id};
+                            new_metrics.J{el}     = metrics.J{old_id};
+                            new_metrics.W{el}     = metrics.W{old_id};
+                            new_metrics.w_csi{el} = metrics.w_csi{old_id};
+                            new_metrics.w_eta{el} = metrics.w_eta{old_id};
+                            new_metrics.Lx{el}    = metrics.Lx{old_id};
+                            new_metrics.Ly{el}    = metrics.Ly{old_id};
+                            new_metrics.Lpx{el}   = metrics.Lpx{old_id};
+                            new_metrics.Lpy{el}   = metrics.Lpy{old_id};
+                            new_metrics.Neu1{el}  = metrics.Neu1{old_id};
+                            new_metrics.Neu2{el}  = metrics.Neu2{old_id};
+                            new_metrics.Neu{el}   = metrics.Neu{old_id};
+                            new_metrics.N1{el}    = metrics.N1{old_id};
+                            new_metrics.N2{el}    = metrics.N2{old_id};
+                            new_metrics.N{el}     = metrics.N{old_id};
+                        end
+                    end
+                    % Updating the points and lines
+                    nE  = Copies*nEl;
+                    nP  = max(new_el_points(:));  new_points = zeros(nP,2);
+                    nL  = max(abs(new_el_lines(:))); new_lines = cell(1,nL);
+                    for el = 1:nE
+                        tmp = int_el(new_mappings.Xm{el},'address');
+                        p_id = tmp{3}; l_id = tmp{2};
+                        
+                        xp = new_mappings.Xm{el}(p_id);
+                        yp = new_mappings.Ym{el}(p_id);
+                        
+                        
+                        
+                        new_points(new_el_points(el,:),:) = [xp' yp'];
+                        
+                        for ll = 1:4
+                            xl = new_mappings.Xm{el}(l_id{ll});
+                            yl = new_mappings.Ym{el}(l_id{ll});
+                            new_lines{new_el_lines(el,ll)} = [xl; yl];
+                        end
+                    end
+                end
+            end
             % Finding the elements that share a line
             shared_line = zeros(Nl,4);
             element_lines = abs(obj.elements.lines);

@@ -451,6 +451,8 @@ classdef Problem
             
             E_sum  = zeros(obj.ProblemData.pointVectorLocation(end));
             I      = zeros(obj.ProblemData.pointVectorLocation(end));
+            e_node = obj.ProblemData.lineVectorLocation;
+            c_node = obj.ProblemData.pointVectorLocation;
             
             % Boundary Conditions
                 dir_points = eval(['[',xml2matlab(obj.xmlContent...
@@ -479,77 +481,78 @@ classdef Problem
                 elementsData      = obj.ProblemData.elements;
                 
                 % Connectivity of elements
-                
-                if any(k==elementsData.periodic)
-                    line_element  = elementsData.periodic_lines(k,:);
-                    point_element = elementsData.periodic_points(k,:);
-                else
-                    line_element  = elementsData.lines(k,:);
-                    point_element = elementsData.points(k,:);
-                end
-                
-                % Initalisation of indexes
-                tmp        = int_el(dataElement.J,'address');
-                yel        = tmp{1};
-                yb         = tmp{2};
-                yc         = tmp{3};
-                i_node     = obj.ProblemData.inElementVectorLocation{k};
-                e_node     = obj.ProblemData.lineVectorLocation;
-                c_node     = obj.ProblemData.pointVectorLocation;
-                %----------------------------------------------------------
-                E = element_matrix(dataElement);
-                %----------------------------------------------------------
-                % Inverse axis
-                in_ln = find(line_element<0);
-                if in_ln>0
-                   inversed_line =  yb{in_ln};
-                   LL = E(inversed_line,inversed_line);
-                   EL = E(:,inversed_line);
-                   LE = E(inversed_line,:);
-                   E(inversed_line,:) = flipud(LE);
-                   E(:,inversed_line) = fliplr(EL);
-                   E(inversed_line,inversed_line) = rot90(LL,2);
-                end
-         
-        %------------------------------------------------------------
-        E_sum(i_node,i_node) =  E(yel,yel);
-        %=================================================================
-        jj = abs(line_element); ll = point_element;
-        % inElement Points
-        
-        E_sum(i_node,c_node(ll)) = E_sum(i_node,c_node(ll)) + E(yel,yc);
-        
-        % Points inElement
-        E_sum(c_node(ll),i_node) = E_sum(c_node(ll),i_node) + E(yc,yel);
-        
-        % Points Points
-        E_sum(c_node(ll),c_node(ll)) = ...
+                if max(abs(nu{k}))>0
+                    if any(k==elementsData.periodic)
+                        line_element  = elementsData.periodic_lines(k,:);
+                        point_element = elementsData.periodic_points(k,:);
+                    else
+                        line_element  = elementsData.lines(k,:);
+                        point_element = elementsData.points(k,:);
+                    end
+                    
+                    % Initalisation of indexes
+                    tmp        = int_el(dataElement.J,'address');
+                    yel        = tmp{1};
+                    yb         = tmp{2};
+                    yc         = tmp{3};
+                    i_node     = obj.ProblemData.inElementVectorLocation{k};
+                    %------------------------------------------------------
+                    E = element_matrix(dataElement);
+                    %------------------------------------------------------
+                    % Inverse axis
+                    in_ln = find(line_element<0);
+                    if in_ln>0
+                        inversed_line =  yb{in_ln};
+                        LL = E(inversed_line,inversed_line);
+                        EL = E(:,inversed_line);
+                        LE = E(inversed_line,:);
+                        E(inversed_line,:) = flipud(LE);
+                        E(:,inversed_line) = fliplr(EL);
+                        E(inversed_line,inversed_line) = rot90(LL,2);
+                    end
+                    
+                    %------------------------------------------------------
+                    E_sum(i_node,i_node) =  E(yel,yel);
+                    %======================================================
+                    jj = abs(line_element); ll = point_element;
+                    % inElement Points
+                    
+                    E_sum(i_node,c_node(ll)) = E_sum(i_node,c_node(ll))...
+                                                               + E(yel,yc);
+                    
+                    % Points inElement
+                    E_sum(c_node(ll),i_node) = E_sum(c_node(ll),i_node)...
+                                                               + E(yc,yel);
+                    
+                    % Points Points
+                    E_sum(c_node(ll),c_node(ll)) = ...
                                    E_sum(c_node(ll),c_node(ll)) + E(yc,yc);
-                               
-               
-                               
-            for ii = 1:4
-               % element edges
-               E_sum(i_node,e_node{jj(ii)}) =   E(yel,yb{ii}); 
-% 
-%                % edges element
-%                
-               E_sum(e_node{jj(ii)},i_node) =   E(yb{ii},yel);
-               
-               % edges edges
-               for n = 1:4
-                   E_sum(e_node{jj(ii)},e_node{jj(n)}) = E_sum(...
-                       e_node{jj(ii)},e_node{jj(n)}) + E(yb{ii},yb{n});
-               end
-            
-               % edges corners
-               E_sum(e_node{jj(ii)},c_node(ll)) = ...
-               E_sum(e_node{jj(ii)},c_node(ll)) + E(yb{ii},yc);
-        
-               % corners edges
-               E_sum(c_node(ll),e_node{jj(ii)}) = ...
-               E_sum(c_node(ll),e_node{jj(ii)}) + E(yc,yb{ii});
-            end
+                    
+                    
+                    
+                    for ii = 1:4
+                        % element edges
+                        E_sum(i_node,e_node{jj(ii)}) =   E(yel,yb{ii});
+                        %
+                        %                % edges element
+                        %
+                        E_sum(e_node{jj(ii)},i_node) =   E(yb{ii},yel);
+                        
+                        % edges edges
+                        for n = 1:4
+                            E_sum(e_node{jj(ii)},e_node{jj(n)}) = E_sum(...
+                           e_node{jj(ii)},e_node{jj(n)}) + E(yb{ii},yb{n});
+                        end
+                        
+                        % edges corners
+                        E_sum(e_node{jj(ii)},c_node(ll)) = ...
+                           E_sum(e_node{jj(ii)},c_node(ll)) + E(yb{ii},yc);
+                        
+                        % corners edges
+                        E_sum(c_node(ll),e_node{jj(ii)}) = ...
+                           E_sum(c_node(ll),e_node{jj(ii)}) + E(yc,yb{ii});
+                    end
+                end
 
             end
 
