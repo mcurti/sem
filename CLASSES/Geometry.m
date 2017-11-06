@@ -399,8 +399,6 @@ classdef Geometry
                         xp = new_mappings.Xm{el}(p_id);
                         yp = new_mappings.Ym{el}(p_id);
                         
-                        
-                        
                         new_points(new_el_points(el,:),:) = [xp' yp'];
                         
                         for ll = 1:4
@@ -410,7 +408,35 @@ classdef Geometry
                         end
                     end
                 end
+                
+                % Joining the old points into the new list
+                for p = 1:Np
+                    if points(p,:) ~= new_points(p,:)
+                        new_points(p,:) = points(p,:);
+                    end
+                end
+                
+                % Joining the old lines into the new list
+                for ll = 1:Nl
+                    try
+                        check = lines{ll} ~= new_lines{ll};
+                    catch
+                        check = false;
+                    end
+                    
+                    if check == false
+                        new_lines{ll} = lines{ll};
+                    end
+                end
+                
+                % Updating the points, lines and elements lists
+%                 obj.points.coordinates = points;
+%                 obj.lines.vector = lines;
+%                 obj.elements.lines
+%                 obj.elements.points
             end
+            
+            
             % Finding the elements that share a line
             shared_line = zeros(Nl,4);
             element_lines = abs(obj.elements.lines);
