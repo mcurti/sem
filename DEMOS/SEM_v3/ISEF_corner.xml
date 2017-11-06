@@ -108,7 +108,7 @@
     <Regions nR="3">
       <region id="1" name="coilN" CurrentDensity="-J" MagneticMaterial="mu0" ElementList="12"></region>
       <region id="2" name="coilP" CurrentDensity="J" MagneticMaterial="mu0" ElementList="14" />
-      <region id="3" name="iron" CurrentDensity="0" MagneticMaterial="mu0*H+2*Js/pi.*atan((pi*(mur-1)*mu0*H)./(2*Js))" ElementList="6,8,13" InitialPermeability="1000" />
+      <region id="3" name="iron" CurrentDensity="0" MagneticMaterial="mu0*H+2*Js/pi.*atan((pi*(mur-1)*mu0*H)./(2*Js))" ElementList="6,7,8,13" InitialPermeability="1000" />
     </Regions>
     <BoundaryConditions dir_points="1,2,3,4,9,18" dir_lines="1,2,3,11,27"></BoundaryConditions>
   </Physics>

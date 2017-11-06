@@ -1,10 +1,10 @@
 %==========================================================================
-% Current_Sources.m
+% fourierElements.m
 % Created: 03.11.2017 - 10:11:59
 % By: M. Curti
 %
-% Generation of the Fourier Coefficients and the reference solution
-% obtained by the Fourier Model
+%fourierElements Performs the computations on one domain and returns matrix
+%components
 %==========================================================================
 classdef fourierElements
     %FOURIER Performs the computations on one domain and returns matrix
