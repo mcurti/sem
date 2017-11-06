@@ -168,8 +168,8 @@ classdef Geometry
             metrics.w_eta    = cell(1,Nel);
             metrics.Lx       = cell(1,Nel);
             metrics.Ly       = cell(1,Nel);
-            metrics.Lpx      = cell(1,Nel);
-            metrics.Lpy      = cell(1,Nel);
+            metrics.Lxp      = cell(1,Nel);
+            metrics.Lyp      = cell(1,Nel);
             metrics.Neu1     = cell(1,Nel);
             metrics.Neu2     = cell(1,Nel);
             metrics.Neu      = cell(2,Nel);
@@ -343,8 +343,8 @@ classdef Geometry
                     new_metrics.w_eta    = cell(1,Copies*nEl);
                     new_metrics.Lx       = cell(1,Copies*nEl);
                     new_metrics.Ly       = cell(1,Copies*nEl);
-                    new_metrics.Lpx      = cell(1,Copies*nEl);
-                    new_metrics.Lpy      = cell(1,Copies*nEl);
+                    new_metrics.Lxp      = cell(1,Copies*nEl);
+                    new_metrics.Lyp      = cell(1,Copies*nEl);
                     new_metrics.Neu1     = cell(1,Copies*nEl);
                     new_metrics.Neu2     = cell(1,Copies*nEl);
                     new_metrics.Neu      = cell(2,Copies*nEl);
@@ -378,8 +378,8 @@ classdef Geometry
                             new_metrics.w_eta{el} = metrics.w_eta{old_id};
                             new_metrics.Lx{el}    = metrics.Lx{old_id};
                             new_metrics.Ly{el}    = metrics.Ly{old_id};
-                            new_metrics.Lpx{el}   = metrics.Lpx{old_id};
-                            new_metrics.Lpy{el}   = metrics.Lpy{old_id};
+                            new_metrics.Lxp{el}   = metrics.Lxp{old_id};
+                            new_metrics.Lyp{el}   = metrics.Lyp{old_id};
                             new_metrics.Neu1{el}  = metrics.Neu1{old_id};
                             new_metrics.Neu2{el}  = metrics.Neu2{old_id};
                             new_metrics.Neu{el}   = metrics.Neu{old_id};
