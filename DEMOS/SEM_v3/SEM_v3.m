@@ -11,11 +11,11 @@ clear; clc;
 S = SEM('ISEF_corner.xml');
 
 % Preparing the current density vector
-J = linspace(.1,7,10);
+J = linspace(.1,8,5);
 Flux = zeros(1,length(J)); remFlux = zeros(1,length(J));
-
+Linc = Flux;
 for k = 1:length(J)
-    new_J = sprintf('%.6f',J(k)*pi*4e-7);
+    new_J = sprintf('%g',J(k)*pi*4e-7);
     S.Physics = S.Physics.setParameter('J',new_J);
     S.Physics = S.Physics.load_current_density;
     
@@ -25,9 +25,14 @@ for k = 1:length(J)
     
     %% Post processing
     [Flux(k), remFlux(k)] = S.PProcessing.flux_linkage([12, 14]);
-    
+    Linc(k) = (Flux(k) - remFlux(k))/J(k);
 end
 %% Plot the results
+SB  = spline(J,Flux);
+
+
+f   = @(x) ppval(SB,x);
+df  = derivest(f,J);
 
 % Plot the vector potential
 figure(1)
@@ -59,4 +64,6 @@ hold on
 plot(J,Flux)
 plot(J,Flux,'ok')
 plot(J*0,remFlux,'*r')
+plot(J,Linc,'o-k')
+plot(J,df,'o-g')
 hold off
