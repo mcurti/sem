@@ -34,9 +34,9 @@ classdef Physics
                                  
             
             % Calculating the problem dimension
-            Nel = element_number(obj.xmlContent);
-            Nl  = line_number(obj.xmlContent);
-            Np  = point_number(obj.xmlContent);
+            Nel = length(G_Class.elements.lines);
+            Nl  = numel(G_Class.lines.vector);
+            Np  = length(G_Class.points.coordinates);
             
             obj.ProblemData.Nel = Nel;
             obj.ProblemData.Nl  = Nl;
@@ -64,7 +64,7 @@ classdef Physics
             end
             obj.ProblemData.inElementsUnknowns = u_tmp;
             obj.ProblemData.linesUnknowns = sum(obj.G_class.xi.line_N-1);
-            obj.ProblemData.pointsUnknowns = point_number(obj.xmlContent);
+            obj.ProblemData.pointsUnknowns = Np;
             
             for k = 1:Nl
                 obj.ProblemData.lineVectorLocation{k} = ...
@@ -82,7 +82,7 @@ classdef Physics
             % Load the number of regions and elements
             Nr = eval(xml2matlab(obj.xmlContent,'Regions'...
                                                      ,0,'nR','Attribute'));
-            Nel = element_number(obj.xmlContent);
+            Nel = obj.ProblemData.Nel;
             Nparam = length(obj.parameters);
             % Loading in the local workspace
             
@@ -137,7 +137,7 @@ classdef Physics
             % Load the number of regions and elements
             Nr = eval(xml2matlab(obj.xmlContent,'Regions'...
                                                      ,0,'nR','Attribute'));
-            Nel = element_number(obj.xmlContent);
+            Nel = obj.ProblemData.Nel;
             % Loading parameters in the local workspace
             Nparam = length(obj.parameters);
             
@@ -252,17 +252,17 @@ end
 end
 
 % Loading the number of elements
-function Nl = element_number(xml)
-    Nl = eval(xml2matlab(xml,'Elements'...
-                                                     ,0,'el','Attribute'));
-end
-
-function Nl = line_number(xml)
-    Nl = eval(xml2matlab(xml,'Lines'...
-                                                     ,0,'l','Attribute'));
-end
-
-function Nl = point_number(xml)
-    Nl = eval(xml2matlab(xml,'Points'...
-                                                     ,0,'p','Attribute'));
-end
+% function Nl = element_number(xml)
+%     Nl = eval(xml2matlab(xml,'Elements'...
+%                                                      ,0,'el','Attribute'));
+% end
+% 
+% function Nl = line_number(xml)
+%     Nl = eval(xml2matlab(xml,'Lines'...
+%                                                      ,0,'l','Attribute'));
+% end
+% 
+% function Nl = point_number(xml)
+%     Nl = eval(xml2matlab(xml,'Points'...
+%                                                      ,0,'p','Attribute'));
+% end

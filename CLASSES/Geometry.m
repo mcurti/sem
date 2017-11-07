@@ -304,8 +304,8 @@ classdef Geometry
                         ,t-1,'type','Attribute');
                     if strcmp(type,'rotation')
                         angle = eval(['[',xml2matlab(A,...
-                        'transformation',t-1,...
-                        'angle','Attribute'),'];']);
+                            'transformation',t-1,...
+                            'angle','Attribute'),'];']);
                     end
                     ElementList = eval(['[',xml2matlab(A,...
                         'transformation',t-1,'ElementList','Attribute'),'];']);
@@ -388,13 +388,16 @@ classdef Geometry
                             new_metrics.N{el}     = metrics.N{old_id};
                         end
                     end
+                    
                     % Updating the points and lines
                     nE  = Copies*nEl;
                     nP  = max(new_el_points(:));  new_points = zeros(nP,2);
                     nL  = max(abs(new_el_lines(:))); new_lines = cell(1,nL);
+                    
                     for el = 1:nE
                         tmp = int_el(new_mappings.Xm{el},'address');
-                        p_id = tmp{3}; l_id = tmp{2};
+                        l_id = int_el(new_mappings.Xm{el},'lines_address');
+                        p_id = tmp{3};
                         
                         xp = new_mappings.Xm{el}(p_id);
                         yp = new_mappings.Ym{el}(p_id);
@@ -429,11 +432,36 @@ classdef Geometry
                     end
                 end
                 
+                % Updating the lines data
+                Nl = nL; Np = nP;
+                new_xi.nodes  = xi.nodes;
+                new_xi.w      = xi.w;
+                new_xi.D      = xi.D;
+                
+                new_xi.line_N            = zeros(1,Nl);
+                new_xi.csi_for_all_lines = cell(1,Nl);
+                new_xi.w_for_all_lines   = cell(1,Nl);
+                new_xi.D_for_all_lines   = cell(1,Nl);
+                
+                for k = 1:Nl
+                    ii = 1;
+                    while length(new_xi.nodes{ii}) ~= ...
+                                            (length(new_lines{k}(1,:)))
+                        ii = ii + 1;
+                    end
+                    new_xi.line_N(k)            = xi.line_N(ii);
+                    new_xi.csi_for_all_lines{k} = new_xi.nodes{ii};
+                    new_xi.w_for_all_lines{k}   = new_xi.w{ii};
+                    new_xi.D_for_all_lines{k}   = new_xi.D{ii};
+                end
                 % Updating the points, lines and elements lists
-%                 obj.points.coordinates = points;
-%                 obj.lines.vector = lines;
-%                 obj.elements.lines
-%                 obj.elements.points
+                obj.points.coordinates = new_points;
+                obj.lines.vector = new_lines;
+                obj.elements.lines = new_el_lines;
+                obj.elements.points = new_el_points;
+                obj.xi = new_xi;
+                metrics = new_metrics;
+                mappings = new_mappings;
             end
             
             
@@ -475,8 +503,8 @@ classdef Geometry
             switch mode
                % Plot points
                case 'points'
-               PointsNumber = eval(xml2matlab(obj.GeometryElement...
-                                            ,'Points',0,'p','Attribute'));
+                   pts = obj.points.coordinates;
+               PointsNumber = length(pts);
                if nargin > 2
                   PropertiesNumber = (nargin-2)/2;
                end
@@ -493,13 +521,13 @@ classdef Geometry
                % Plot lines
                
                case 'lines'
-               LinesNumber = eval(xml2matlab(obj.GeometryElement...
-                                            ,'Lines',0,'l','Attribute'));
+                   lns = obj.lines.vector;
+               LinesNumber = numel(lns);
                if nargin > 2
                   PropertiesNumber = (nargin-2)/2;
                end
                for k = 1:LinesNumber
-                   temp_line = obj.lines.vector{k};
+                   temp_line = lns{k};
                    hp = plot(temp_line(1,:),temp_line(2,:));
 
                    if exist('PropertiesNumber','var')
@@ -511,9 +539,7 @@ classdef Geometry
                % Plot element grid
                
                case 'ElementGrid'
-               ElementNumber = ...
-                        eval(xml2matlab(obj.GeometryElement,...
-                                          'Elements',0,'el','Attribute'));
+               ElementNumber = numel(obj.mappings.Xm);
                if nargin > 2
                   PropertiesNumber = (nargin-2)/2;
                end
