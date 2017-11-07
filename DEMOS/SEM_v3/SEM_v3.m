@@ -11,7 +11,8 @@ clear; clc;
 S = SEM('ISEF_corner.xml');
 
 % Preparing the current density vector
-J = linspace(.1,8,40);
+% J = linspace(.1,8,40);
+J  = [1e4 3e4 5e4 7.5e4 1e5 2e5 3e5 4e5 5e5 6e5 7e5 8e5 9e5 1e6]*1e-6;
 Flux = zeros(1,length(J)); remFlux = zeros(1,length(J));
 Linc = Flux;
 for k = 1:length(J)
@@ -27,6 +28,8 @@ for k = 1:length(J)
     [Flux(k), remFlux(k)] = S.PProcessing.flux_linkage([12, 14]);
     Linc(k) = (Flux(k) - remFlux(k))/J(k);
 end
+Flux = Flux*1e-3; remFlux = remFlux*1e-3; Linc = Linc*1e-3;
+
 %% Plot the results
 SB  = spline(J,Flux);
 
