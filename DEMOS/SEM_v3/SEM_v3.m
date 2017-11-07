@@ -11,7 +11,7 @@ clear; clc;
 S = SEM('ISEF_corner.xml');
 
 % Preparing the current density vector
-J = linspace(.1,8,5);
+J = linspace(.1,8,40);
 Flux = zeros(1,length(J)); remFlux = zeros(1,length(J));
 Linc = Flux;
 for k = 1:length(J)
@@ -63,7 +63,7 @@ clf
 hold on
 plot(J,Flux)
 plot(J,Flux,'ok')
-plot(J*0,remFlux,'*r')
+% plot(J*0,remFlux,'*r')
 plot(J,Linc,'o-k')
 plot(J,df,'o-g')
 hold off
