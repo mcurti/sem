@@ -369,8 +369,8 @@ classdef PostProcessing < matlab.mixin.SetGet
                             get_next_permeability(obj,Materials,xmlContent)
             % Initial parameters
             
-            options = optimoptions('fsolve','Display','off',...
-                'FunctionTolerance',1e-8);
+%             options = optimoptions('fsolve','Display','off',...
+%                 'FunctionTolerance',1e-8);
             mod_B = obj.Flux.abs;
             Nel   = obj.ProblemData.Nel;
             mu0   = pi*4e-7;
@@ -399,8 +399,8 @@ classdef PostProcessing < matlab.mixin.SetGet
             end
             
             % !!! Temporary analytical BH curve
-            bh = @(H) mu0*H+2*Js/pi.*atan((pi*(mur-1)*mu0*H)./(2*Js));
-            bhp = @(H) mu0 + (mur-1)*mu0./((pi*(mur-1)*mu0)^2/(2*Js)^2*H.^2+1);
+%             bh = @(H) mu0*H+2*Js/pi.*atan((pi*(mur-1)*mu0*H)./(2*Js));
+%             bhp = @(H) mu0 + (mur-1)*mu0./((pi*(mur-1)*mu0)^2/(2*Js)^2*H.^2+1);
             % Obtaining the magnetic field strength
             mod_H    = cell(1,Nel);
             B_bh = cell(1,Nel);
@@ -427,14 +427,16 @@ classdef PostProcessing < matlab.mixin.SetGet
                 
                 % Computing the remanence of B according to the BH curve
                 if fcn_hdl(k)
-                    H = mod_H{k};
-                    h = fsolve(@(x) bh(x) - mod_B{k}(:),mod_H{k}(:),options);
-                    H = reshape(h,size(H));
-                    B_bh{k} = bh(H);
-                    Brem = B_bh{k}-bhp(H).*H;
-                    Permeability{k} = bhp(H); %
-                    K{k} = Brem./(mod_B{k}.*bhp(H));
-                    
+%                     H = mod_H{k};
+%                     h = fsolve(@(x) bh(x) - mod_B{k}(:),mod_H{k}(:),options);
+%                     H = reshape(h,size(H));
+%                     B_bh{k} = bh(H);
+%                     Brem = B_bh{k}-bhp(H).*H;
+%                     Permeability{k} = bhp(H); %
+                    B_bh{k} = mod_B{k};
+                    [Brem, Permeability{k}] = BHtool(B_bh{k}*1e3,1);
+                    Brem = Brem*1e-3; Permeability{k} = Permeability{k};
+                    K{k} = Brem./(mod_B{k}.*Permeability{k});
                 else
                     B_bh{k} = mod_B{k};
                     Permeability{k} = Materials.Permeability{k};
@@ -449,14 +451,17 @@ classdef PostProcessing < matlab.mixin.SetGet
         %------------------------------------------------------------------
         function [FL, remFL] = flux_linkage(obj,elements)
             
-            FL = 0; remFL = 0;
-            
+            FL = 0; remFL = 0; 
             for k = elements
+                
+                S = sum(obj.metrics.W{k}(:).*obj.metrics.J{k}(:));
+                               
                 FL = FL + sum(obj.Potential{k}(:).*...
-                   obj.metrics.W{k}(:).*obj.metrics.J{k}(:));
+                   obj.metrics.W{k}(:).*obj.metrics.J{k}(:))/S;
                 remFL = remFL + sum(obj.remPotential{k}(:).*...
-                   obj.metrics.W{k}(:).*obj.metrics.J{k}(:));
+                   obj.metrics.W{k}(:).*obj.metrics.J{k}(:))/S;
             end
+            
         end
     end
     

@@ -30,7 +30,7 @@ classdef SEM
             % - Settings for the nonlinear solver
             obj.NonlinearSolver.max_iter = 30; % Maximum iterations for the
                                                % nonlinear solver
-            obj.NonlinearSolver.tol    = 1e-4; % Maximum tolerance for the 
+            obj.NonlinearSolver.tol    = 1e-6; % Maximum tolerance for the 
                                                % nonlinear solver
             
             % Storing the instance of the Geometry class
@@ -82,7 +82,7 @@ classdef SEM
             dataPostProcessing.xi           = obj.Geometry.xi;
             dataPostProcessing.elements     = obj.Geometry.elements;
             dataPostProcessing.Permeability = ...
-                obj.Problem.Materials.Permeability;
+                obj.Problem.Materials;
             
             % Load the sources and build the Y vector
             disp('SEM - Load the sources and build the rhs vector')
@@ -132,7 +132,13 @@ classdef SEM
                     disp('The solution converged to desired tolerance')
                     break
                 end
+                
             end
+            
+%             figure(1)
+%             clf
+%             semilogy(1:ii,err(1:ii))
+%             pause
             
             if max(abs(Y_mag)>0)
                PHI_rem = obj.Problem.Global_Matrix\Y_mag;
