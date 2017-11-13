@@ -219,11 +219,24 @@ classdef Geometry
                 w_eta = xi.w_for_all_lines{connectivity(2)};
                 Deta  = xi.D_for_all_lines{connectivity(2)};
                 
-                [temp_Xm, temp_Ym] = TransfiniteQuadMap(csi, eta, s);
-                [temp_Xm_grid, temp_Ym_grid] = ...
-                           TransfiniteQuadMap(csi_grid', csi_grid', s_grid);
-                [temp_Xcsi, temp_Ycsi, temp_Xeta, temp_Yeta, temp_J ] = ...
-                TransfiniteQuadMetrics(csi, eta, s);
+                try
+                    [temp_Xm, temp_Ym] = TransfiniteQuadMap(csi, eta, s);
+                    [temp_Xm_grid, temp_Ym_grid] = ...
+                        TransfiniteQuadMap(csi_grid', csi_grid', s_grid);
+                    [temp_Xcsi, temp_Ycsi, temp_Xeta, temp_Yeta, temp_J ]...
+                        = TransfiniteQuadMetrics(csi, eta, s);
+                catch
+                    difxi  = numel(s{1,1}) - numel(s{1,3});
+                    difeta = numel(s{1,2}) - numel(s{1,4});
+                    if difxi > 0
+                        error('The lengths of the lines 1 and 3 in the element %d are not consistent',k)
+                    elseif  difeta > 0
+                        error('The lengths of the lines 2 and 4 in the element %d are not consistent',k)
+                    else
+                        error('Something is wrong with element %d',k)
+                    end
+                        
+                end
 
                 mappings.Xm{k}      = temp_Xm;
                 mappings.Ym{k}      = temp_Ym;
@@ -457,6 +470,7 @@ classdef Geometry
                for k = 1:PointsNumber
                    hp = plot(obj.points.coordinates(k,1),...
                              obj.points.coordinates(k,2),'.');
+%                          text(obj.points.coordinates(k,1),obj.points.coordinates(k,2),sprintf('%d',k),'HorizontalAlignment','right')
 
                    if exist('PropertiesNumber','var')
                       for ii = 1:PropertiesNumber
