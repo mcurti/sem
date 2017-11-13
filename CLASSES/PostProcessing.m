@@ -88,8 +88,7 @@ classdef PostProcessing < matlab.mixin.SetGet
         
         function obj = compute_B(obj)
             Nel = obj.ProblemData.Nel;
-%             Nl  = obj.ProblemData.Nl;
-%             Np  = obj.ProblemData.Np;
+            
             
             obj.Flux.x_comp = cell(1,Nel);
             obj.Flux.y_comp = cell(1,Nel);
@@ -365,7 +364,7 @@ classdef PostProcessing < matlab.mixin.SetGet
         %------------------------------------------------------------------
         % Function that returns the updated permeability according to the
         % given BH rule and the source as a result of remanence
-        function [Permeability, K ]= ...
+        function [Permeability, K, nonlin_elem ]= ...
                             get_next_permeability(obj,Materials,xmlContent)
             % Initial parameters
             
@@ -373,7 +372,7 @@ classdef PostProcessing < matlab.mixin.SetGet
 %                 'FunctionTolerance',1e-8);
             mod_B = obj.Flux.abs;
             Nel   = obj.ProblemData.Nel;
-            mu0   = pi*4e-7;
+%             mu0   = pi*4e-7;
             Nr    = eval(xml2matlab(xmlContent,'Regions'...
                                                      ,0,'nR','Attribute'));
             parameters = obj.ProblemData.physical_parameters;
@@ -402,11 +401,11 @@ classdef PostProcessing < matlab.mixin.SetGet
 %             bh = @(H) mu0*H+2*Js/pi.*atan((pi*(mur-1)*mu0*H)./(2*Js));
 %             bhp = @(H) mu0 + (mur-1)*mu0./((pi*(mur-1)*mu0)^2/(2*Js)^2*H.^2+1);
             % Obtaining the magnetic field strength
-            mod_H    = cell(1,Nel);
-            B_bh = cell(1,Nel);
+%             mod_H    = cell(1,Nel);
+%             B_bh = cell(1,Nel);
             
             % Getting the features of each element
-            fcn_hdl = false(1,Nel);
+            nonlin_elem = false(1,Nel);
             
             for k = 1:Nr
                 % Extracting the initial condition
@@ -416,29 +415,29 @@ classdef PostProcessing < matlab.mixin.SetGet
                 else
                     ElementList  = eval(['[' xml2matlab(obj.xmlContent,...
                     'region',k-1,'ElementList','Attribute') ']']);
-                    fcn_hdl(ElementList) = true;
+                    nonlin_elem(ElementList) = true;
 %                     char_fcn = xml2matlab(obj.xmlContent,...
 %                                    'region',k-1,'MagneticMaterial','Attribute');
                 end
             end
             for k = 1:Nel
                 % Computing the magnetic field strength
-                mod_H{k} = mod_B{k}./(Materials.Permeability{k}*mu0);
+%                 mod_H{k} = mod_B{k}./(Materials.Permeability{k}*mu0);
                 
                 % Computing the remanence of B according to the BH curve
-                if fcn_hdl(k)
+                if nonlin_elem(k)
 %                     H = mod_H{k};
 %                     h = fsolve(@(x) bh(x) - mod_B{k}(:),mod_H{k}(:),options);
 %                     H = reshape(h,size(H));
 %                     B_bh{k} = bh(H);
 %                     Brem = B_bh{k}-bhp(H).*H;
 %                     Permeability{k} = bhp(H); %
-                    B_bh{k} = mod_B{k};
-                    [Brem, Permeability{k}] = BHtool(B_bh{k}*1e3,1);
+%                     B_bh{k} = mod_B{k};
+                    [Brem, Permeability{k}] = BHtool(mod_B{k}*1e3,1);
                     Brem = Brem*1e-3; Permeability{k} = Permeability{k};
                     K{k} = Brem./(mod_B{k}.*Permeability{k});
                 else
-                    B_bh{k} = mod_B{k};
+%                     B_bh{k} = mod_B{k};
                     Permeability{k} = Materials.Permeability{k};
                     K{k} = zeros(size(mod_B{k}));
                 end
@@ -462,6 +461,87 @@ classdef PostProcessing < matlab.mixin.SetGet
                    obj.metrics.W{k}(:).*obj.metrics.J{k}(:))/S;
             end
             
+        end
+        
+        %------------------------------------------------------------------
+        % Function to solve the force on the elements
+        %------------------------------------------------------------------
+        function [Fxt, Fyt] = element_force(obj, elements)
+            element_lines = obj.elements.lines(elements,:);
+            involved_lines = unique(element_lines);
+            boundary_lines = zeros(size(involved_lines));
+            mu0 = pi*4e-7;
+            k = 1;
+            
+            % Selecting the boundary lines
+            for ll = involved_lines'
+                num_el = numel(find(element_lines==ll));
+                if num_el == 1
+                    boundary_lines(k) = ll;
+                    k = k + 1;
+                end
+                boundary_lines(boundary_lines == 0) = [];
+            end
+            
+            % Finding the outside elements
+            outside_elements = zeros(numel(boundary_lines),2);
+            shl = obj.lines.shared_line(boundary_lines,:);
+            
+            Fx = zeros(1,numel(boundary_lines));
+            Fy = zeros(1,numel(boundary_lines));
+            
+            for ll = 1:length(outside_elements)
+                % Filling in the list of outside elements
+                if any(shl(ll,1)==elements)
+                    outside_elements(ll,1) = shl(ll,2);
+                    outside_elements(ll,2) = shl(ll,4);
+                else
+                    outside_elements(ll,1) = shl(ll,1);
+                    outside_elements(ll,2) = shl(ll,3);
+                end
+                % Checking if the element is outside of the domain
+                if outside_elements(ll,1) == 0
+                    error('The element must not touch the boundary')
+                end
+                
+                % Extracting the physical and geometrical parameters
+                % The quadratures
+                l_id = outside_elements(ll,2);
+                e_id = outside_elements(ll,1);
+                lg_id = boundary_lines(ll);
+                if l_id==1 || l_id==3
+                    neu_tmp  = obj.metrics.Neu2{e_id};
+                    if l_id == 1
+                        n_tmpx   = -obj.metrics.N2{1,e_id};
+                        n_tmpy   = -obj.metrics.N2{2,e_id};
+                    else
+                        n_tmpx   =  obj.metrics.N2{1,e_id};
+                        n_tmpy   =  obj.metrics.N2{2,e_id};
+                    end
+                else
+                    neu_tmp  = obj.metrics.Neu1{e_id};
+                    if l_id == 2
+                        n_tmpx   =  obj.metrics.N1{1,e_id};
+                        n_tmpy   =  obj.metrics.N1{2,e_id};
+                    else
+                        n_tmpx   =  -obj.metrics.N1{1,e_id};
+                        n_tmpy   =  -obj.metrics.N1{2,e_id};
+                    end
+                end
+                tmp    = int_el(neu_tmp,'lines_address');
+                l_pts = tmp{l_id};
+                
+                wl = neu_tmp(l_pts).*obj.xi.w_for_all_lines{lg_id}';
+                nx = n_tmpx(l_pts);
+                ny = n_tmpy(l_pts);
+                Bx = obj.Flux.x_comp{e_id}(l_pts);
+                By = obj.Flux.y_comp{e_id}(l_pts);
+                B  = obj.Flux.abs{e_id}(l_pts);
+                Fx(ll) = ((Bx.^2-B.^2*.5).*nx + Bx.*By.*ny)*wl'/mu0;
+                                       
+                Fy(ll) = ((By.^2-B.^2*.5).*ny + Bx.*By.*nx)*wl'/mu0;
+            end
+            Fxt = sum(Fx); Fyt = sum(Fy);
         end
     end
     

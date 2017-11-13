@@ -12,9 +12,10 @@ S = SEM('ISEF_corner.xml');
 
 % Preparing the current density vector
 % J = linspace(.1,8,40);
-J  = [1e4 3e4 5e4 7.5e4 1e5 2e5 3e5 4e5 5e5 6e5 7e5 8e5 9e5 1e6]*1e-6;
+J  = [1e4 3e4 5e4 1e5 2e5 4e5 6e5 8e5 1e6]*1e-6;
+I  = [0.5 1.5 2.5 5 10 20 30 40 50];
 Flux = zeros(1,length(J)); remFlux = zeros(1,length(J));
-Linc = Flux;
+Flux_inc = Flux; L_inc = Flux; L = Flux;
 for k = 1:length(J)
     new_J = sprintf('%g',J(k)*pi*4e-7);
     S.Physics = S.Physics.setParameter('J',new_J);
@@ -26,16 +27,19 @@ for k = 1:length(J)
     
     %% Post processing
     [Flux(k), remFlux(k)] = S.PProcessing.flux_linkage([12, 14]);
-    Linc(k) = (Flux(k) - remFlux(k))/J(k);
+    
+%     Flux_inc(k) = (Flux(k) - remFlux(k))/J(k);
+    L(k) = Flux(k)*1e-3/I(k);
+    L_inc(k) = (Flux(k) - remFlux(k))/I(k)*1e-3;
 end
-Flux = Flux*1e-3; remFlux = remFlux*1e-3; Linc = Linc*1e-3;
+% Flux = Flux*1e-3; remFlux = remFlux*1e-3; L_inc = L_inc*1e-3;
 
 %% Plot the results
-SB  = spline(J,Flux);
+SB  = spline(I,Flux*1e-3);
 
 
 f   = @(x) ppval(SB,x);
-df  = derivest(f,J);
+df  = derivest(f,I);
 
 % Plot the vector potential
 figure(1)
@@ -64,9 +68,23 @@ figure_config(2,10,10,8)
 figure(2)
 clf
 hold on
-plot(J,Flux)
-plot(J,Flux,'ok')
+plot(I,Flux)
+plot(I,Flux,'ok')
 % plot(J*0,remFlux,'*r')
-plot(J,Linc,'o-k')
-plot(J,df,'o-g')
+% plot(I,L_inc,'o-k')
 hold off
+xlabel('Current, A')
+ylabel('Flux linkage, Wb')
+
+figure(3)
+clf
+hold on
+% plot(I,Flux)
+% plot(I,Flux,'ok')
+% plot(J*0,remFlux,'*r')
+plot(I,L_inc,'o-k')
+plot(I,df,'o-g')
+% plot(I,df,'o-g')
+hold off
+xlabel('Current, A')
+ylabel('Inductance, Wb')

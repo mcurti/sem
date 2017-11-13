@@ -15,18 +15,14 @@ else
     warning ('Undefined material option - Please import new material data as explained in description');
 end
 Bsat=(B(end-1)+B(end))./2; % Saturation field, no tangent further
-Bmin=0.0938;               % If lower tha Bmin, interpolation gives negative Br
+Bmin=0.09379;               % If lower tha Bmin, interpolation gives negative Br
 % Interpolation
 mu0 = 4*pi*1e-7;   
 SB  = spline(B,H);
 x0  = Bmod;
 x0(x0>Bsat) = Bsat;
 x0(x0<Bmin) = Bmin;
-% if      x0>Bsat
-%         x0=Bsat;
-% elseif  x0<Bmin
-%         x0=Bmin;
-% end    
+
 f   = @(x) ppval(SB,x);
 df  = derivest(f,x0); 
 % Output

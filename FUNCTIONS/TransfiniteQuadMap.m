@@ -1,4 +1,4 @@
-function [ X, Y ] = TransfiniteQuadMap1( csi, eta, s )
+function [ X, Y ] = TransfiniteQuadMap( csi, eta, s )
 %TransfiniteQuadMap Returns the mapped meshgrid according to the boundary
 %curves
 %   csi      - x points
