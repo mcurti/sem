@@ -206,18 +206,7 @@ classdef Physics
         % Update Parameters
         %------------------------------------------------------------------
         function obj = setParameter(obj,Parameter,Value)
-            
-            % Estimating the number of parameters
-            Nparam = length(obj.parameters);
-            
-            % For loop for changing and modifying the input parameter
-            for k = 1:Nparam
-                if strcmp(obj.parameters{k,1},Parameter)
-                    obj.parameters{k,2} = Value;
-                    return
-                end
-            end
-            error('Requested parameter does not exist')
+            obj = change_parameter( obj,Parameter,Value );
         end
     end
     

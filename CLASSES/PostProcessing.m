@@ -173,6 +173,29 @@ classdef PostProcessing < matlab.mixin.SetGet
                             var{k},'edgecolor','none');
                     end
         end
+        
+        %------------------------------------------------------------------
+        % Plot the a quantity on the LGL nodes with contour
+        %------------------------------------------------------------------
+        function plot_contour_var(obj,var)
+            Nel = obj.ProblemData.Nel;
+            
+            % findig the min and max
+            min_var = 0; max_var = 0;
+            for k = 1:Nel
+                min_var = min([min_var min(var{k}(:))]);
+                max_var = min([max_var max(var{k}(:))]);
+            end
+            
+            flux_lines = linspace(min_var, max_var, 20);
+            
+            % Plot contours
+            for k = 1:Nel
+                contour(obj.mappings.Xm{k},obj.mappings.Ym{k},...
+                    obj.Potential{k},flux_lines);
+            end
+        end
+        
         %------------------------------------------------------------------
         % Plot the solution on FEM nodes
         %------------------------------------------------------------------
@@ -434,7 +457,7 @@ classdef PostProcessing < matlab.mixin.SetGet
 %                     Permeability{k} = bhp(H); %
 %                     B_bh{k} = mod_B{k};
                     [Brem, Permeability{k}] = BHtool(mod_B{k}*1e3,1);
-                    Brem = Brem*1e-3; Permeability{k} = Permeability{k};
+                    Brem = Brem*1e-3;
                     K{k} = Brem./(mod_B{k}.*Permeability{k});
                 else
 %                     B_bh{k} = mod_B{k};
@@ -485,6 +508,7 @@ classdef PostProcessing < matlab.mixin.SetGet
             
             % Finding the outside elements
             outside_elements = zeros(numel(boundary_lines),2);
+            inside_elements  = zeros(numel(boundary_lines),2);
             shl = obj.lines.shared_line(boundary_lines,:);
             
             Fx = zeros(1,numel(boundary_lines));
@@ -495,9 +519,13 @@ classdef PostProcessing < matlab.mixin.SetGet
                 if any(shl(ll,1)==elements)
                     outside_elements(ll,1) = shl(ll,2);
                     outside_elements(ll,2) = shl(ll,4);
+                    inside_elements(ll,1)  = shl(ll,1);
+                    inside_elements(ll,2)  = shl(ll,3);
                 else
                     outside_elements(ll,1) = shl(ll,1);
                     outside_elements(ll,2) = shl(ll,3);
+                    inside_elements(ll,1)  = shl(ll,2);
+                    inside_elements(ll,2)  = shl(ll,4);
                 end
                 % Checking if the element is outside of the domain
                 if outside_elements(ll,1) == 0
@@ -506,37 +534,40 @@ classdef PostProcessing < matlab.mixin.SetGet
                 
                 % Extracting the physical and geometrical parameters
                 % The quadratures
-                l_id = outside_elements(ll,2);
-                e_id = outside_elements(ll,1);
+                l_id_out = outside_elements(ll,2);
+                e_id_out = outside_elements(ll,1);
+                l_id_in = inside_elements(ll,2);
+                e_id_in = inside_elements(ll,1);
                 lg_id = boundary_lines(ll);
-                if l_id==1 || l_id==3
-                    neu_tmp  = obj.metrics.Neu2{e_id};
-                    if l_id == 1
-                        n_tmpx   = -obj.metrics.N2{1,e_id};
-                        n_tmpy   = -obj.metrics.N2{2,e_id};
+                if l_id_out==1 || l_id_out==3
+                    neu_tmp  = obj.metrics.Neu2{e_id_out};
+                    if l_id_out == 1
+                        n_tmpx   = -obj.metrics.N2{1,e_id_in};
+                        n_tmpy   = -obj.metrics.N2{2,e_id_in};
                     else
-                        n_tmpx   =  obj.metrics.N2{1,e_id};
-                        n_tmpy   =  obj.metrics.N2{2,e_id};
+                        n_tmpx   =  obj.metrics.N2{1,e_id_in};
+                        n_tmpy   =  obj.metrics.N2{2,e_id_in};
                     end
                 else
-                    neu_tmp  = obj.metrics.Neu1{e_id};
-                    if l_id == 2
-                        n_tmpx   =  obj.metrics.N1{1,e_id};
-                        n_tmpy   =  obj.metrics.N1{2,e_id};
+                    neu_tmp  = obj.metrics.Neu1{e_id_out};
+                    if l_id_out == 2
+                        n_tmpx   =  obj.metrics.N1{1,e_id_in};
+                        n_tmpy   =  obj.metrics.N1{2,e_id_in};
                     else
-                        n_tmpx   =  -obj.metrics.N1{1,e_id};
-                        n_tmpy   =  -obj.metrics.N1{2,e_id};
+                        n_tmpx   =  -obj.metrics.N1{1,e_id_in};
+                        n_tmpy   =  -obj.metrics.N1{2,e_id_in};
                     end
                 end
                 tmp    = int_el(neu_tmp,'lines_address');
-                l_pts = tmp{l_id};
+                l_pts_out = tmp{l_id_out};
+                l_pts_in = tmp{l_id_in};
                 
-                wl = neu_tmp(l_pts).*obj.xi.w_for_all_lines{lg_id}';
-                nx = n_tmpx(l_pts);
-                ny = n_tmpy(l_pts);
-                Bx = obj.Flux.x_comp{e_id}(l_pts);
-                By = obj.Flux.y_comp{e_id}(l_pts);
-                B  = obj.Flux.abs{e_id}(l_pts);
+                wl = neu_tmp(l_pts_out).*obj.xi.w_for_all_lines{lg_id}';
+                nx = n_tmpx(l_pts_in);
+                ny = n_tmpy(l_pts_in);
+                Bx = obj.Flux.x_comp{e_id_out}(l_pts_out);
+                By = obj.Flux.y_comp{e_id_out}(l_pts_out);
+                B  = obj.Flux.abs{e_id_out}(l_pts_out);
                 Fx(ll) = ((Bx.^2-B.^2*.5).*nx + Bx.*By.*ny)*wl'/mu0;
                                        
                 Fy(ll) = ((By.^2-B.^2*.5).*ny + Bx.*By.*nx)*wl'/mu0;

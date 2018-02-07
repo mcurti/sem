@@ -5,7 +5,7 @@
 %
 % Building the global matrix and the right hand side source vector
 %==========================================================================
-classdef Problem
+classdef Problem < matlab.mixin.SetGet
     %PROBLEM Builds the matrices for the problem
     %   Detailed explanation goes here
     
@@ -91,6 +91,7 @@ classdef Problem
                 if any(k==elementsData.periodic)
                     line_element  = elementsData.periodic_lines(k,:);
                     point_element = elementsData.periodic_points(k,:);
+                    line_element_no_abs = line_element;
                 else
                     line_element  = abs(elementsData.lines(k,:));
                     line_element_no_abs = elementsData.lines(k,:);
@@ -232,11 +233,13 @@ classdef Problem
                                
             for ii = 1:4
                % element edges
-               E_sum(i_node,e_node{jj(ii)}) =   E(yel,yb{ii}); 
+               E_sum(i_node,e_node{jj(ii)}) =   ...
+                              E_sum(i_node,e_node{jj(ii)}) + E(yel,yb{ii}); 
 
                % edges element
                
-               E_sum(e_node{jj(ii)},i_node) =   E(yb{ii},yel);
+               E_sum(e_node{jj(ii)},i_node) =   ...
+                              E_sum(e_node{jj(ii)},i_node) + E(yb{ii},yel);
                
                % edges edges
                for n = 1:4
@@ -610,10 +613,10 @@ end
 
 
 function out = xml2matlab(varargin)
-         mode          = varargin{nargin};
-         xmlElement    = varargin{1};
-         ElementName   = varargin{2};
-         ElementNumber = varargin{3};
+mode          = varargin{nargin};
+xmlElement    = varargin{1};
+ElementName   = varargin{2};
+ElementNumber = varargin{3};
 switch mode
     % Extracts all the attributes for certain element and returns the name
     % and its value in a 2 column cell
@@ -627,7 +630,7 @@ switch mode
             Parameters{k,2} = char(Attributes.item(k-1).getValue);
         end
         out = Parameters;
-    % Extracts only selected attribute and returns its value
+        % Extracts only selected attribute and returns its value
     case 'Attribute'
         AttributeName = varargin{4};
         Attribute = char(xmlElement.getElementsByTagName(ElementName). ...

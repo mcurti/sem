@@ -5,7 +5,7 @@
 %     and the non-linear material BH curve choice, 1,2,3...
 % *** Return the remanent field source Br and the relative permeability mu_r
 %     Copyright L.A.J. Friedrich    24/10/2017
-function [Br, mur] = BHtool (Bmod,option)
+function [Br, mur_inc] = MUBrtool (mur,option)
 % Material selection
 if      option==1
     [H,B] = textread('BH_Cogent_M800_50A_50Hz.txt');
@@ -26,6 +26,6 @@ x0(x0<Bmin) = Bmin;
 f   = @(x) ppval(SB,x);
 df  = derivest(f,x0); 
 % Output
-mur = 1./df./mu0;     
-Br  = x0 - f(x0)./df; 
+mur_inc = 1./df./mu0;     
+Br  = -f(x0)./df + x0; 
 end

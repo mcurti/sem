@@ -9,7 +9,10 @@
 clear; clc;
 
 S = SEM('ISEF_corner.xml');
-
+NonlinearSolver.tol = 1e-4;
+NonlinearSolver.max_iter = 30;
+NonlinearSolver.display = 'on';
+set(S,'NonlinearSolver',NonlinearSolver);
 % Preparing the current density vector
 % J = linspace(.1,8,40);
 J  = [1e4 3e4 5e4 1e5 2e5 4e5 6e5 8e5 1e6]*1e-6;

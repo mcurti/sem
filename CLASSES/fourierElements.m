@@ -292,7 +292,7 @@ classdef fourierElements
             [p_exp, n_exp] = np_exp(obj.w_n,obj.Edata.heights(1,1),...
                                                   obj.ys(1,1),obj.ys(1,2));
                                               
-%             w_fourier(end) = w_fourier(1) + w_fourier(end);
+            w_fourier([1 end]) = w_fourier(1) + w_fourier(end);
 
             % Computing the block matrix in the Espace matrix
             Espace_block = -diag(w_fourier(1:end-1))*...

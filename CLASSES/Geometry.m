@@ -517,6 +517,14 @@ classdef Geometry
 
             end
         end
+        
+        
+        %------------------------------------------------------------------
+        % Update Parameters
+        %------------------------------------------------------------------
+        function obj = setParameter(obj,Parameter,Value)
+            obj = change_parameter( obj,Parameter,Value );
+        end
     end
     
 end
