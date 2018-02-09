@@ -25,18 +25,18 @@ switch mode
         P1  = varargin{1};
         P2  = varargin{2};
         arg = varargin{3};
-        x1  = n2range(arg,P1(x),P2(x))';
-        y1  = n2range(arg,P1(y),P2(y))';
-        if (P2(y)-P1(y))==0
-            sx  = x1;
-            sy  = ones(1,length(y1))*P1(y);
-        elseif (P2(x)-P1(x))==0
-            sx  = ones(1,length(y1))*P1(x);
-            sy  = y1;
-        else
-            sx  = (y1 - P1(y))/(P2(y)-P1(y))*(P2(x)-P1(x))+P1(x);
-            sy  = (x1 - P1(x))/(P2(x)-P1(x))*(P2(y)-P1(y))+P1(y);
-        end
+        sx  = n2range(arg,P1(x),P2(x))';
+        sy  = n2range(arg,P1(y),P2(y))';
+%         if (P2(y)-P1(y))==0
+%             sx  = x1;
+%             sy  = ones(1,length(y1))*P1(y);
+%         elseif (P2(x)-P1(x))==0
+%             sx  = ones(1,length(y1))*P1(x);
+%             sy  = y1;
+%         else
+%             sx  = (y1 - P1(y))/(P2(y)-P1(y))*(P2(x)-P1(x))+P1(x);
+%             sy  = (x1 - P1(x))/(P2(x)-P1(x))*(P2(y)-P1(y))+P1(y);
+%         end
     case 'arc'
         P1  = varargin{1};
         P2  = varargin{2};
@@ -55,13 +55,19 @@ switch mode
         Po = varargin{4};
         %------------------------------------------------------------------
         R = abs(abs(P1(x) - Po(x))+abs(P1(y) - Po(y))*1i);
-        alpha_1 = cart2pol(P1(x)-Po(x),P1(y)-Po(y));
-        alpha_2 = cart2pol(P2(x)-Po(x),P2(y)-Po(y));
-        if alpha_2< -pi/2
-            alpha_2 = 2*pi - abs(alpha_2);
-%             disp('1')
+        alpha_1 = atan2(P1(y)-Po(y),P1(x)-Po(x));
+        alpha_2 = atan2(P2(y)-Po(y),P2(x)-Po(x));
+%         if alpha_2< -pi/2
+%             alpha_2 = 2*pi - abs(alpha_2);
+% %             disp('1')
+%         end
+        if alpha_1 < 0
+            alpha_1 = 2*pi + alpha_1;
         end
         
+        if alpha_2 < 0
+            alpha_2 = 2*pi + alpha_2;
+        end
         %------------------------------------------------------------------
         a2     = n2range(arg,alpha_1,alpha_2);
         sx     = Po(x) + R*cos(a2)';
