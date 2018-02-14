@@ -31,26 +31,8 @@ classdef Geometry
             % Obtaining the parameters
             obj.parameters = xml2matlab(A,'Parameters',0,'Attributes');
             % Loading the parameters in local workspace
-            K = length(obj.parameters);
-            % Loading in the local workspace
+            parameter_loader(obj.parameters)
             
-            check_list = false(1,K);
-            
-            for k = 1:K
-                try
-                    eval([obj.parameters{k,1}, '=', ...
-                                               obj.parameters{k,2}, ';']);
-                catch
-                    check_list(k) = true;
-                end
-            end
-            check_list = find(check_list==true);
-            % running the parameters with errors
-            
-            for k = check_list
-                    eval([obj.parameters{k,1}, '=', ...
-                                               obj.parameters{k,2}, ';']);
-            end
             % Evaluating the points
             %--------------------------------------------------------------
             % Loading the number of points
@@ -533,32 +515,4 @@ classdef Geometry
         end
     end
     
-end
-
-function out = xml2matlab(varargin)
-         mode          = varargin{nargin};
-         xmlElement    = varargin{1};
-         ElementName   = varargin{2};
-         ElementNumber = varargin{3};
-switch mode
-    % Extracts all the attributes for certain element and returns the name
-    % and its value in a 2 column cell
-    case 'Attributes'
-        Attributes = xmlElement.getElementsByTagName(ElementName). ...
-            item(ElementNumber).getAttributes;
-        AttributeNumber = Attributes.getLength;
-        Parameters = cell(AttributeNumber,2);
-        for k = 1:AttributeNumber
-            Parameters{k,1} = char(Attributes.item(k-1).getName);
-            Parameters{k,2} = char(Attributes.item(k-1).getValue);
-        end
-        out = Parameters;
-    % Extracts only selected attribute and returns its value
-    case 'Attribute'
-        AttributeName = varargin{4};
-        Attribute = char(xmlElement.getElementsByTagName(ElementName). ...
-            item(ElementNumber).getAttribute(AttributeName));
-        out = Attribute;
-        
-end
 end
