@@ -48,8 +48,7 @@ per_lines  = eval(['[',xml2matlab(obj.Problem.xmlContent...
 
 
 tot_unknowns = (obj.Physics.ProblemData.inElementsUnknowns + ...
-    obj.Physics.ProblemData.linesUnknowns      + ...
-    obj.Physics.ProblemData.Np);
+    obj.Physics.ProblemData.linesUnknowns + obj.Physics.ProblemData.Np);
 e_node = obj.Physics.ProblemData.lineVectorLocation;
 c_node = obj.Physics.ProblemData.pointVectorLocation;
 
@@ -89,7 +88,7 @@ for ii = 1:iter
     else
         space2freq = obj.Fourier_matrix.Efrequency;
         freq2space = obj.Fourier_matrix.Espace;
-        fourier_index = (1:(size(freq2space,2)-1)) + size(freq2space,1);
+        fourier_index = (1:(size(freq2space,2))) + size(freq2space,1);
         E = [obj.Problem.Global_Matrix freq2space; space2freq];
         Y = [obj.Problem.Y.vector zeros(1,size(space2freq,1))];
         
@@ -225,9 +224,9 @@ else
         %     Bx0(k) = X(end - (k-1));
     end
     
-    Bx0 = X(end);
+    Bx0 = X(end-1);
     
-    Az0 = X(end-1)*0;
+    Az0 = X(end);
     
     s  = zeros(1,numel(fourier_index));
     obj.Fourier = obj.Fourier.update_coefficients(s, c1, c2, c3, c4, Az0, Bx0);

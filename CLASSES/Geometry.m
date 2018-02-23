@@ -178,6 +178,11 @@ classdef Geometry
                 % Loading the connectivities for lines and points
                 connectivity = eval(['[',xml2matlab(A,'line_element'...
                                  ,k-1,'connectivity','Attribute'),'];']);
+                
+                if max(connectivity)>Nl
+                    error('Index %d in element %d exceed the number of lines %d',...
+                        max(connectivity),k,Nl)
+                end
                 conn_points = abs(eval(['[',xml2matlab(A,'point_element'...
                                  ,k-1,'connectivity','Attribute'),'];']));
                 obj.elements.lines(k,:)  = connectivity; 
@@ -192,6 +197,7 @@ classdef Geometry
                                     ,kp,'connectivity','Attribute'),'];']);
                                 kp = kp + 1;
                 end
+                
                 for ii = 1:4
                     s{1,ii}      = lines{connectivity(ii)}(1,:);
                     s{2,ii}      = lines{connectivity(ii)}(2,:);
@@ -477,6 +483,8 @@ classdef Geometry
                for k = 1:LinesNumber
                    temp_line = obj.lines.vector{k};
                    hp = plot(temp_line(1,:),temp_line(2,:));
+%                    middle = round(numel(temp_line(1,:))/2);
+%                    text(temp_line(1,middle)-1,temp_line(2,middle)-1,sprintf('%d',k),'HorizontalAlignment','right')
 
                    if exist('PropertiesNumber','var')
                       for ii = 1:PropertiesNumber

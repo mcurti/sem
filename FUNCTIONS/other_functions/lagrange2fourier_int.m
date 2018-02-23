@@ -52,7 +52,7 @@ for ii = 1:50
         Nnodes    = zeros(1,Nel); % Number of nodes in each element
         tau       = (x{end}(end) - x{1}(1))/2;
         % Period of the function
-        w_i       = abs((1:Q)'*pi/tau);% Calculated frequencies based on Q
+        w_i       = (1:Q)'*pi/tau;% Calculated frequencies based on Q
         M         = Qk;          % Size of the integration vector
         % Calculating the nodes and weights for the integration
         [x_int, w_int] = LegendreGausLobattoNodesAndWeights(M);

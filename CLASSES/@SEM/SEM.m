@@ -67,62 +67,16 @@ classdef SEM < matlab.mixin.SetGet
             % Fourier Regions
             %==============================================================
             try
-                % Geting general parameters for Fourier
-                Q     = eval(xml2matlab(obj.Problem.xmlContent...
-                    ,'Fourier',0,'Harmonics','Attribute'));
-                type  = xml2matlab(obj.Problem.xmlContent...
-                    ,'Fourier',0,'type','Attribute');
-                start = eval(xml2matlab(obj.Problem.xmlContent...
-                    ,'Fourier',0,'start','Attribute'));
-                tau   = eval(xml2matlab(obj.Problem.xmlContent...
-                    ,'Fourier',0,'tau','Attribute'));
-                fel   = eval(xml2matlab(obj.Problem.xmlContent...
-                    ,'Fourier',0,'fel','Attribute'));
-                
-                % Geting parameters per domain
-                parameter_loader(obj.Geometry.parameters)
-                domain.heights    = zeros(fel,2);
-                domain.points_top = cell(fel);
-                domain.lines_top  = cell(fel);
-                
-                for k = 1:fel
-                    domain.heights(k,:) = ...
-                        eval(['[' xml2matlab(obj.Problem.xmlContent...
-                        ,'domain',k-1,'heights','Attribute') '];']);
-                    domain.lines_top{k} = ...
-                        eval(['[' xml2matlab(obj.Problem.xmlContent...
-                        ,'domain',k-1,'lines_top','Attribute') '];']);
-                    domain.elements_top{k} = ...
-                        eval(['[' xml2matlab(obj.Problem.xmlContent...
-                        ,'domain',k-1,'elements_top','Attribute') '];']);
-                end
-                
-                % Formating the data for Fourier class
-                Elements           = struct;
-                Elements.x_start   = start;
-                Elements.tau       = tau;
-                Elements.Harmonics = Q;
-                Elements.heights   = domain.heights;
-                Elements.type      = type;
-                obj.Fourier        = fourierElements(Elements);
-                Geom_data.lines    = obj.Geometry.lines;
-                Geom_data.xi       = obj.Geometry.xi;
-                Geom_data.metrics  = obj.Geometry.metrics;
-                %
-                FourierData.connectedLines = domain.lines_top{1};
-                FourierData.connectedElements = domain.elements_top{1};
+               obj.Fourier = FourierElement(obj.Physics.xmlContent,obj.Geometry);
                 % Building the Fourier to space tranformation matrix
-                [Espace, in_line] = obj.Fourier.fourier_space_matrix...
-                           (obj.Problem.ProblemData,Geom_data,FourierData);
+                Espace = obj.Fourier.fourier_space_matrix...
+                                                 (obj.Problem.ProblemData);
                 
                 Efrequency = obj.Fourier.fourier_frequency_matrix...
-                           (obj.Problem.ProblemData,Geom_data,FourierData);
-                
-                       
+                                                 (obj.Problem.ProblemData);
                 % Storing matrices
-                obj.Fourier_matrix.Espace     = Espace;
-                obj.Fourier_matrix.in_line    = in_line;
-                obj.Fourier_matrix.Efrequency = Efrequency;
+                obj.Fourier_matrix.Espace        = Espace;
+                obj.Fourier_matrix.Efrequency    = Efrequency;
             catch
                 disp('No Fourier domains detected')
             end
