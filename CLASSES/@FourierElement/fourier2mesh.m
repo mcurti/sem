@@ -27,7 +27,7 @@ if strcmp(type,'cartesian')
             b.*cos(obj.w_n*x(k)));
     end
 else
-    y = y*pi/180;
+    y = pi-y*pi/180;
     for k = 1:points_number
         
         [~, ~, p_y1, n_y1] = ...

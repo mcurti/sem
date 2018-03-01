@@ -27,7 +27,7 @@ x_i = linspace(x1, x2, dx); y_j = linspace(y1, y2, dy);
 % theta = linspace(0, abs(obj.Edata.tau), dx);
 
 [x_grid, y_grid] = meshgrid(x_i,y_j);
-
+x_grid = fliplr(x_grid);
 if strcmp(type,'cartesian')
     a  = exp( obj.w_n*(y_j-obj.ys(El,1)))'*diag(C1) + ...
         exp(-obj.w_n*(y_j-obj.ys(El,2)))'*diag(C2) - ...
@@ -46,8 +46,9 @@ else
         end
     end
     a = (rp*diag(C1) + rn*diag(C2)); b = (rp*diag(C3) + rn*diag(C4));
-    c0 = obj.Bx0*log(y_grid)+ obj.Az0;
+    c0 = obj.Bx0*log(y_grid) + obj.Az0;
 end
-x_i = x_i -90*pi/180*0;
+
+
 f_solution = c0 + a*sin(obj.w_n*x_i) + b*cos(obj.w_n*x_i);
 end

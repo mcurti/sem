@@ -55,20 +55,16 @@ dc_index        = c + unknowns + Q*4;
 
 FourierMatrix = zeros(FourierSize);
 
-FourierMatrix(1:Q,1:2*Q)                 = -[diag(p_y1) diag(n_y1)];
-FourierMatrix((1:Q) + 2*Q,(1:2*Q) + 2*Q) = -[diag(p_y1) diag(n_y1)];
+FourierMatrix(1:Q,1:2*Q)                       = - [diag(p_y1) diag(n_y1)];
+FourierMatrix((1:Q) + 2*Q,(1:2*Q) + 2*Q)       = - [diag(p_y1) diag(n_y1)];
 
-% The DC component with SEM
-%                    FourierMatrix(Nfel*Q*4 + 1,Nfel*Q*4 + 1) = ...
-%                                                         -hf(k,1);
 
-FourierMatrix(2*Q + (-Q+1:0),2*Q + (-2*Q+1:0)) = -[diag(p_y2) diag(n_y2)];
-
-FourierMatrix(4*Q + (-Q+1:0),4*Q + (-2*Q+1:0)) = -[diag(p_y2) diag(n_y2)];
+FourierMatrix(2*Q + (-Q+1:0),2*Q + (-2*Q+1:0)) = - [diag(p_y2) diag(n_y2)];
+FourierMatrix(4*Q + (-Q+1:0),4*Q + (-2*Q+1:0)) = - [diag(p_y2) diag(n_y2)];
 
 % The DC components to space
-FourierMatrix(FourierSize-1,FourierSize-[1 0]) = -[log(hf(1)) 1];
-FourierMatrix(FourierSize,FourierSize-[1 0]) =   -[log(hf(2)) 1];
+FourierMatrix(FourierSize-1,FourierSize-[1 0]) = - [log(hf(1)) 1];
+FourierMatrix(FourierSize,FourierSize-[1 0])   = - [log(hf(2)) 1];
 % Fourier size
 Efrequency = zeros(FourierSize,unknowns);
 %===============================================================
@@ -141,20 +137,20 @@ for q = 1:2
     
     
     
-%     if q == 1; dc = 1; else; dc = 0; end
+    if q == 1; dc = 1; else; dc = 1; end
     
     % Building the Efrequency based on boundary conditions
     
     % Sine term for the shared line
     % SEM side
-    Efrequency(sin_index((1:Q)+Q*(q-1))-unknowns,index_space) = Ia(:,index_fourier);
+    Efrequency(sin_index((1:Q)+Q*(q-1))-unknowns,index_space) = Ia(:,index_fourier)*dc;
     
     % Cosine terms
     % SEM side
-    Efrequency(cos_index((1:Q)+Q*(q-1))-unknowns,index_space) = Ib(:,index_fourier);
+    Efrequency(cos_index((1:Q)+Q*(q-1))-unknowns,index_space) = Ib(:,index_fourier)*dc;
     
     % DC components
-    Efrequency(dc_index(q)-unknowns,index_space)              = Ic0(index_fourier);
+    Efrequency(dc_index(q)-unknowns,index_space)              = Ic0(index_fourier)*dc;
 end
 Efrequency = [Efrequency, FourierMatrix];
 end
