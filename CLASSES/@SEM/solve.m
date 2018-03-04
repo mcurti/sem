@@ -88,7 +88,7 @@ for ii = 1:iter
     else
         space2freq = obj.Fourier_matrix.Efrequency;
         freq2space = obj.Fourier_matrix.Espace;
-        fourier_index = (1:(size(freq2space,2))) + size(freq2space,1);
+        fourier_index = (1:(size(freq2space,2)-2)) + size(freq2space,1);
         E = [obj.Problem.Global_Matrix freq2space; space2freq];
         Y = [obj.Problem.Y.vector zeros(1,size(space2freq,1))];
         

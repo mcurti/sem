@@ -63,8 +63,8 @@ FourierMatrix(2*Q + (-Q+1:0),2*Q + (-2*Q+1:0)) = - [diag(p_y2) diag(n_y2)];
 FourierMatrix(4*Q + (-Q+1:0),4*Q + (-2*Q+1:0)) = - [diag(p_y2) diag(n_y2)];
 
 % The DC components to space
-FourierMatrix(FourierSize-1,FourierSize-[1 0]) = - [log(hf(1)) 1];
-FourierMatrix(FourierSize,FourierSize-[1 0])   = - [log(hf(2)) 1];
+FourierMatrix(FourierSize-1,FourierSize-[1 0]) = -[log(hf(1)) 1];
+FourierMatrix(FourierSize,FourierSize-[1 0])   = -[log(hf(2)) 1];
 % Fourier size
 Efrequency = zeros(FourierSize,unknowns);
 %===============================================================
