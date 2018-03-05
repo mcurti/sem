@@ -32,8 +32,8 @@ else
         
         [~, ~, p_y1, n_y1] = ...
                             hbnp_r(obj.w_n,x(k),obj.ys(El,1),obj.ys(El,2));
-        a  = p_y1.*C1' + n_y1.*C2'+ C0((1:Q)+Q)'./obj.w_n;
-        b  = p_y1.*C3' + n_y1.*C4'+ C0(1:Q)'./obj.w_n;
+        a  = p_y1.*C1' + n_y1.*C2';
+        b  = p_y1.*C3' + n_y1.*C4';
         c0 = obj.Az0 + obj.Bx0*log(x(k));
         
         f_solution(k) = c0 + sum(a.*sin(obj.w_n*y(k)) + ...

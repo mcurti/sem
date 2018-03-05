@@ -137,7 +137,7 @@ for q = 1:2
     
     
     
-    if q == 1; dc = 1; else; dc = 1; end
+    if q == 1; dc = 1; else; dc = 0; end
     
     % Building the Efrequency based on boundary conditions
     
