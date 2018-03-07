@@ -55,16 +55,16 @@ dc_index        = c + unknowns + Q*4;
 
 FourierMatrix = zeros(FourierSize);
 
-FourierMatrix(1:Q,1:2*Q)                       = - [diag(p_y1) diag(n_y1)];
-FourierMatrix((1:Q) + 2*Q,(1:2*Q) + 2*Q)       = - [diag(p_y1) diag(n_y1)];
+FourierMatrix(1:Q,1:2*Q)                       =  -[diag(p_y1) diag(n_y1)]*hf(1);
+FourierMatrix((1:Q) + 2*Q,(1:2*Q) + 2*Q)       =  -[diag(p_y1) diag(n_y1)]*hf(1);
 
 
-FourierMatrix(2*Q + (-Q+1:0),2*Q + (-2*Q+1:0)) = - [diag(p_y2) diag(n_y2)];
-FourierMatrix(4*Q + (-Q+1:0),4*Q + (-2*Q+1:0)) = - [diag(p_y2) diag(n_y2)];
+FourierMatrix(2*Q + (-Q+1:0),2*Q + (-2*Q+1:0)) =  -[diag(p_y2) diag(n_y2)]*hf(2);
+FourierMatrix(4*Q + (-Q+1:0),4*Q + (-2*Q+1:0)) =  -[diag(p_y2) diag(n_y2)]*hf(2);
 
 % The DC components to space
-FourierMatrix(FourierSize-1,FourierSize-[1 0]) = -[log(hf(1)) 1];
-FourierMatrix(FourierSize,FourierSize-[1 0])   = -[log(hf(2)) 1];
+FourierMatrix(FourierSize-1,FourierSize-[1 0]) =  -[log(hf(1)) 1];
+FourierMatrix(FourierSize,FourierSize-[1 0])   =  -[log(hf(2)) 1];
 % Fourier size
 Efrequency = zeros(FourierSize,unknowns);
 %===============================================================
@@ -87,22 +87,16 @@ for q = 1:2
             theta_start = theta(1);
             theta_sign  = sign(theta(end) - theta(1));
             end
-            tmp = (theta - theta_start)*theta_sign;
-            [xi_n, w] = LegendreGausLobattoNodesAndWeights(numel(theta)-1);
-            xi = n2range(xi_n,tmp(1), tmp(end));
-%             xi = theta;
+            xi = (theta - theta_start)*theta_sign;
         else
             xi = x;
         end
         
         xi_fourier{k}  = xi;
         Nnodes{q}(k)     = numel(xi_fourier{k});
-%         l = conn_El{q}(k);
         
-%         lines_index = int_el(metrics.Neu2{l},1,'lines_address');
-%         neu2      = metrics.Neu2{l}(lines_index{nl});
-        w_fourier{k}  = w*((max(xi) - min(xi))/2);%...
-%             obj.SEMdata.xi.w_for_all_lines{conn_lines{q}(k)}'*((max(xi) - min(xi))/2);  %
+        w_fourier{k}  = ...
+            obj.SEMdata.xi.w_for_all_lines{conn_lines{q}(k)}'*((max(xi) - min(xi))/2);  %
     end
     NnodesSum(q) = sum(Nnodes{q});  % Total number of nodes;
     % SEM to fourier transformation
@@ -135,19 +129,17 @@ for q = 1:2
     
     index_fourier = [f_lines P(1:end-1)];
     
-    
-    
-    if q == 1; dc = 1; else; dc = 0; end
+    if q == 1; dc = 1; else; dc = 1; end
     
     % Building the Efrequency based on boundary conditions
     
     % Sine term for the shared line
     % SEM side
-    Efrequency(sin_index((1:Q)+Q*(q-1))-unknowns,index_space) = Ia(:,index_fourier)*dc;
+    Efrequency(sin_index((1:Q)+Q*(q-1))-unknowns,index_space) =  Ia(:,index_fourier)*dc;
     
     % Cosine terms
     % SEM side
-    Efrequency(cos_index((1:Q)+Q*(q-1))-unknowns,index_space) = Ib(:,index_fourier)*dc;
+    Efrequency(cos_index((1:Q)+Q*(q-1))-unknowns,index_space) =  Ib(:,index_fourier)*dc;
     
     % DC components
     Efrequency(dc_index(q)-unknowns,index_space)              = Ic0(index_fourier)*dc;

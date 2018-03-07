@@ -36,8 +36,8 @@ else
         b  = p_y1.*C3' + n_y1.*C4';
         c0 = obj.Az0 + obj.Bx0*log(x(k));
         
-        f_solution(k) = c0 + sum(a.*sin(obj.w_n*y(k)) + ...
-            b.*cos(obj.w_n*y(k)));
+        f_solution(k) = c0/x(k) + sum(-a.*cos(obj.w_n*y(k)) + ...
+            b.*sin(obj.w_n*y(k)))/x(k);
     end
 end
 end
