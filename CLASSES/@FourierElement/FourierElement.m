@@ -86,8 +86,8 @@ classdef FourierElement
             y_s = zeros(1,2);
             
             for k = 1:obj.Edata.Nfel
-                y_s(k,1) = max(Elements.heights(:));
-                y_s(k,2) = min(Elements.heights(:));
+                y_s(k,1) = 35; %max(Elements.heights(:));
+                y_s(k,2) = 35; %min(Elements.heights(:));
             end
             obj.ys = y_s;
         end
