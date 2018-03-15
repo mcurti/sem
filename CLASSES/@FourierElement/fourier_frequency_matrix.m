@@ -55,12 +55,12 @@ dc_index        = c + unknowns + Q*4;
 
 FourierMatrix = zeros(FourierSize);
 
-FourierMatrix(1:Q,1:2*Q)                       =  -[diag(p_y1) diag(n_y1)]*hf(1);
-FourierMatrix((1:Q) + 2*Q,(1:2*Q) + 2*Q)       =  -[diag(p_y1) diag(n_y1)]*hf(1);
+FourierMatrix(1:Q,1:2*Q)                       =  -[diag(p_y1) diag(n_y1)];
+FourierMatrix((1:Q) + 2*Q,(1:2*Q) + 2*Q)       =  -[diag(p_y1) diag(n_y1)];
 
 
-FourierMatrix(2*Q + (-Q+1:0),2*Q + (-2*Q+1:0)) =  -[diag(p_y2) diag(n_y2)]*hf(2);
-FourierMatrix(4*Q + (-Q+1:0),4*Q + (-2*Q+1:0)) =  -[diag(p_y2) diag(n_y2)]*hf(2);
+FourierMatrix(2*Q + (-Q+1:0),2*Q + (-2*Q+1:0)) =  -[diag(p_y2) diag(n_y2)];
+FourierMatrix(4*Q + (-Q+1:0),4*Q + (-2*Q+1:0)) =  -[diag(p_y2) diag(n_y2)];
 
 % The DC components to space
 FourierMatrix(FourierSize-1,FourierSize-[1 0]) =  -[log(hf(1)) 1];

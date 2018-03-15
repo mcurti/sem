@@ -74,7 +74,7 @@ for ii = 1:50
             
             % Evaluate the Fourier coefficients for each element
             % The DC component
-            Ic0c{k} = reshape(w{k},1,numel(w{k}))/(2*tau);%((l'*w_int_n)/(2*tau))';
+            Ic0c{k} = ((l'*w_int_n)/(2*tau))';%reshape(w{k},1,numel(w{k}))/(2*tau);%
             
             % sine components
             Iac{k}  = sin(w_i*x_int_n')*diag(w_int_n)*l/tau;

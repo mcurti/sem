@@ -27,17 +27,20 @@ if strcmp(type,'cartesian')
             b.*cos(obj.w_n*x(k)));
     end
 else
-    y = pi-y*pi/180;
+%     y = pi-y*pi/180;
+    
+    [t, r] = cart2pol(x,y);
+    t = pi-t;
     for k = 1:points_number
         
         [~, ~, p_y1, n_y1] = ...
-                            hbnp_r(obj.w_n,x(k),obj.ys(El,1),obj.ys(El,2));
+                            hbnp_r(obj.w_n,r(k),obj.ys(El,1),obj.ys(El,2));
         a  = p_y1.*C1' + n_y1.*C2';
         b  = p_y1.*C3' + n_y1.*C4';
-        c0 = obj.Az0 + obj.Bx0*log(x(k));
+        c0 = obj.Az0 + obj.Bx0*log(r(k));
         
-        f_solution(k) = c0/x(k) + sum(-a.*cos(obj.w_n*y(k)) + ...
-            b.*sin(obj.w_n*y(k)))/x(k);
+        f_solution(k) = c0 + sum(a.*sin(obj.w_n*t(k)) + ...
+            b.*cos(obj.w_n*t(k)));
     end
 end
 end
