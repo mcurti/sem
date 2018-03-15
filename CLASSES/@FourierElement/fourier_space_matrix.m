@@ -21,7 +21,7 @@ Nel(1)        = numel(conn_lines{1}); % Number of elements
 Nel(2)        = numel(conn_lines{2}); % Number of elements
 Nnodes{1}     = zeros(1,Nel(1));      % Number of nodes in each element
 Nnodes{2}     = zeros(1,Nel(2));      % Number of nodes in each element
-% Nfel          = obj.Edata.Nfel;    % Number of Fourier Elements
+hf            = obj.Edata.heights;
 Q             = obj.Edata.Harmonics;
 
 for k = 1:Nel(1)
@@ -122,7 +122,7 @@ for k = 1:2
              sin(xi_fourier{k}(1:end-1)'*obj.w_n')*diag(h_n), ...
              cos(xi_fourier{k}(1:end-1)'*obj.w_n')*diag(h_p), ...
              cos(xi_fourier{k}(1:end-1)'*obj.w_n')*diag(h_n), ...
-             ones(numel(xi_fourier{k}(1:end-1)),1)./obj.Edata.heights(k)...
+             ones(numel(xi_fourier{k}(1:end-1)),1)./hf(k)...
              , zeros(numel(xi_fourier{k}(1:end-1)),1)]*dc;
     end
     

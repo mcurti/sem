@@ -142,7 +142,7 @@ for q = 1:2
     Efrequency(cos_index((1:Q)+Q*(q-1))-unknowns,index_space) =  Ib(:,index_fourier)*dc;
     
     % DC components
-    Efrequency(dc_index(q)-unknowns,index_space)              = Ic0(index_fourier)*dc;
+    Efrequency(dc_index(q)-unknowns,index_space)              =  Ic0(index_fourier)*dc;
 end
 Efrequency = [Efrequency, FourierMatrix];
 end
