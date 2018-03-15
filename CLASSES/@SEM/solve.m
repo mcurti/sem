@@ -99,8 +99,8 @@ for ii = 1:iter
     fprintf('Start solving the linear system at time %.4f \n'...
         ,toc);
     s_time = toc;
-    S = sparse(E);
     
+    S = sparse(E);
     
     PHI(index) = S(index,index)\(Y(index)' + Y_mag(index));
     

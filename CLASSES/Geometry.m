@@ -464,7 +464,7 @@ classdef Geometry
                for k = 1:PointsNumber
                    hp = plot(obj.points.coordinates(k,1),...
                              obj.points.coordinates(k,2),'.');
-%                          text(obj.points.coordinates(k,1)-1,obj.points.coordinates(k,2),sprintf('%d',k),'HorizontalAlignment','right','Color','red')
+                         text(obj.points.coordinates(k,1)-1,obj.points.coordinates(k,2),sprintf('%d',k),'HorizontalAlignment','right','Color','red')
 
                    if exist('PropertiesNumber','var')
                       for ii = 1:PropertiesNumber

@@ -51,7 +51,7 @@ dc_index        = c + unknowns + Q*4;
 % Initiating the Efrequency matrix
 % The unknowns in the SEM model
 % Building the boundary condition matrix
-
+alpha = 10*pi/180;
 
 FourierMatrix = zeros(FourierSize);
 
@@ -59,8 +59,10 @@ FourierMatrix(1:Q,1:2*Q)                       =  -[diag(p_y1) diag(n_y1)];
 FourierMatrix((1:Q) + 2*Q,(1:2*Q) + 2*Q)       =  -[diag(p_y1) diag(n_y1)];
 
 
-FourierMatrix(2*Q + (-Q+1:0),2*Q + (-2*Q+1:0)) =  -[diag(p_y2) diag(n_y2)];
-FourierMatrix(4*Q + (-Q+1:0),4*Q + (-2*Q+1:0)) =  -[diag(p_y2) diag(n_y2)];
+FourierMatrix(2*Q + (-Q+1:0),[2*Q + (-2*Q+1:0) 4*Q + (-2*Q+1:0)]) = ...
+   -[[diag(p_y2) diag(n_y2)]*cos(alpha) -[diag(p_y2) diag(n_y2)]*sin(alpha)];
+FourierMatrix(4*Q + (-Q+1:0),[2*Q + (-2*Q+1:0) 4*Q + (-2*Q+1:0)]) = ...
+   -[[diag(p_y2) diag(n_y2)]*sin(alpha) [diag(p_y2) diag(n_y2)]*cos(alpha)];
 
 % The DC components to space
 FourierMatrix(FourierSize-1,FourierSize-[1 0]) =  -[log(hf(1)) 1];
