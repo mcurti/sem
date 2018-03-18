@@ -2,7 +2,8 @@ function [ xj, wj ] = LegendreGausLobattoNodesAndWeights( N )
 %LegendreGausLobattoNodesAndWeights Summary of this function goes here
 %   Detailed explanation goes here
 try
-    load('NodesAndWeights.mat')
+    NodesAndWeights = [];
+    load('NodesAndWeights.mat','NodesAndWeights')
     
     xj = NodesAndWeights.nodes{N};
     wj = NodesAndWeights.weights{N};

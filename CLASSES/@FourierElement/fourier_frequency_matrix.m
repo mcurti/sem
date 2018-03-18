@@ -23,6 +23,7 @@ Nnodes{2}     = zeros(1,Nel(2));      % Number of nodes in each element
 NnodesSum     = zeros(1,2);
 % Nfel       = obj.Edata.Nfel;   % Number of Fourier Elements
 Q          = obj.Edata.Harmonics;
+mover_offset  = obj.Edata.x_start*2*pi/obj.Edata.tau;
 hf         = obj.Edata.heights;% Heights of Fourier Elements
 FourierSize= Q*4 + 2;
 type       = obj.Edata.type;
@@ -51,7 +52,7 @@ dc_index        = c + unknowns + Q*4;
 % Initiating the Efrequency matrix
 % The unknowns in the SEM model
 % Building the boundary condition matrix
-alpha = 10*pi/180;
+alpha = mover_offset*pi/180*(1:Q);
 
 FourierMatrix = zeros(FourierSize);
 
@@ -60,9 +61,12 @@ FourierMatrix((1:Q) + 2*Q,(1:2*Q) + 2*Q)       =  -[diag(p_y1) diag(n_y1)];
 
 
 FourierMatrix(2*Q + (-Q+1:0),[2*Q + (-2*Q+1:0) 4*Q + (-2*Q+1:0)]) = ...
-   -[[diag(p_y2) diag(n_y2)]*cos(alpha) -[diag(p_y2) diag(n_y2)]*sin(alpha)];
+   -[diag(cos(alpha))*[diag(p_y2) diag(n_y2)], ...
+   -diag(sin(alpha))*[diag(p_y2) diag(n_y2)]];
+
 FourierMatrix(4*Q + (-Q+1:0),[2*Q + (-2*Q+1:0) 4*Q + (-2*Q+1:0)]) = ...
-   -[[diag(p_y2) diag(n_y2)]*sin(alpha) [diag(p_y2) diag(n_y2)]*cos(alpha)];
+   -[diag(sin(alpha))*[diag(p_y2) diag(n_y2)], ...
+   diag(cos(alpha))*[diag(p_y2) diag(n_y2)]];
 
 % The DC components to space
 FourierMatrix(FourierSize-1,FourierSize-[1 0]) =  -[log(hf(1)) 1];

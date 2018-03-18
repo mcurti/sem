@@ -23,6 +23,7 @@ Nnodes{1}     = zeros(1,Nel(1));      % Number of nodes in each element
 Nnodes{2}     = zeros(1,Nel(2));      % Number of nodes in each element
 hf            = obj.Edata.heights;
 Q             = obj.Edata.Harmonics;
+mover_offset  = obj.Edata.x_start*2*pi/obj.Edata.tau;
 
 for k = 1:Nel(1)
     Nnodes{1}(k) = numel(obj.SEMdata.lines.vector{conn_lines{1}(k)}(1,:));
@@ -116,7 +117,10 @@ for k = 1:2
         [h_p, h_n, ~, ~] = ...
             hbnp_r(obj.w_n,obj.Edata.heights(k),obj.ys(1),obj.ys(2));
     if k == 1; dc = 1; else; dc = 1; end% + 
-    if k == 1; a = 0; else; a = 10*pi/180; end
+    if k == 1; a = 0; else 
+        a = (ones(numel(xi_fourier{k}(1:end-1)),1)*(1:Q))...
+            *mover_offset*pi/180; 
+    end
         % Computing the block matrix in the Espace matrix
         Espace_block{k} = (diag(w_fourier{k}(1:end-1)))*...
             [sin(xi_fourier{k}(1:end-1)'*obj.w_n'+ a)*diag(h_p), ...

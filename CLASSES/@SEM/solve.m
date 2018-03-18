@@ -41,30 +41,30 @@ dataPostProcessing.Permeability = ...
 err_el = zeros(1,Nel);
 init_phi = cell(1,Nel);
 % Count the periodic unknowns
-per_points = eval(['[',xml2matlab(obj.Problem.xmlContent...
-    ,'BoundaryConditions',0,'periodic_points','Attribute'),'];']);
-per_lines  = eval(['[',xml2matlab(obj.Problem.xmlContent...
-    ,'BoundaryConditions',0,'periodic_lines','Attribute'),'];']);
+% per_points = eval(['[',xml2matlab(obj.Problem.xmlContent...
+%     ,'BoundaryConditions',0,'periodic_points','Attribute'),'];']);
+% per_lines  = eval(['[',xml2matlab(obj.Problem.xmlContent...
+%     ,'BoundaryConditions',0,'periodic_lines','Attribute'),'];']);
 
 
-tot_unknowns = (obj.Physics.ProblemData.inElementsUnknowns + ...
-    obj.Physics.ProblemData.linesUnknowns + obj.Physics.ProblemData.Np);
-e_node = obj.Physics.ProblemData.lineVectorLocation;
-c_node = obj.Physics.ProblemData.pointVectorLocation;
+% tot_unknowns = (obj.Physics.ProblemData.inElementsUnknowns + ...
+%     obj.Physics.ProblemData.linesUnknowns + obj.Physics.ProblemData.Np);
+% e_node = obj.Physics.ProblemData.lineVectorLocation;
+% c_node = obj.Physics.ProblemData.pointVectorLocation;
 
-SEM_index = 1:tot_unknowns;
+% SEM_index = 1:tot_unknowns;
 
-for k = per_points
-    SEM_index(c_node(k),:)  = 0;
-end
-
-% lines
-for k = per_lines
-    
-    SEM_index(e_node{k},:) = 0;
-end
-
-SEM_index(SEM_index==0) = [];
+% for k = per_points
+%     SEM_index(c_node(k),:)  = 0;
+% end
+% 
+% % lines
+% for k = per_lines
+%     
+%     SEM_index(e_node{k},:) = 0;
+% end
+% 
+% SEM_index(SEM_index==0) = [];
 
 
 for k = 1:Nel
@@ -86,15 +86,27 @@ for ii = 1:iter
     if isempty(obj.Fourier)
         fourier_index = [];
     else
+        s_time = toc;
+        disp('Bulding the Fourier frequency matrix')
         space2freq = obj.Fourier_matrix.Efrequency;
+        fprintf('Computation time for frequency matrix is %.4f \n',toc - s_time)
+        disp('Bulding the Fourier space matrix')
+        s_time = toc;
         freq2space = obj.Fourier_matrix.Espace;
+        fprintf('Computation time for space matrix is %.4f \n',toc - s_time)
         fourier_index = (1:(size(freq2space,2))) + size(freq2space,1);
+%         E = zeros(fourier_index(end));
+        s_time = toc;
+        
+        disp('Concatenating SEM and Fourier Matrices')
         E = [obj.Problem.Global_Matrix freq2space; space2freq];
         Y = [obj.Problem.Y.vector zeros(1,size(space2freq,1))];
+        fprintf('Computation time for concatenation is %.4f \n',toc - s_time)
+        
         
     end
-    index = [SEM_index fourier_index ];
-    PHI = zeros(1,(tot_unknowns+numel(fourier_index)));
+%     index = [SEM_index fourier_index ];
+%     PHI = zeros(1,(tot_unknowns+numel(fourier_index)));
     
     fprintf('Start solving the linear system at time %.4f \n'...
         ,toc);
@@ -102,7 +114,7 @@ for ii = 1:iter
     
     S = sparse(E);
     
-    PHI(index) = S(index,index)\(Y(index)' + Y_mag(index));
+    PHI = S\(Y' + Y_mag);
     
     fprintf('Linear system solved in  %.4f seconds \n', ...
         toc - s_time);
