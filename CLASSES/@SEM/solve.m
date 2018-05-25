@@ -23,7 +23,7 @@ else
         obj.Problem.ProblemData.pointVectorLocation(end),1); ...
         zeros(size(obj.Fourier_matrix.Efrequency,1),1)];
 end
-%             prev_PHI = Y_mag;
+            prev_PHI = Y_mag;
 
 
 dataPostProcessing.xmlContent   = ...
@@ -38,8 +38,8 @@ dataPostProcessing.elements     = obj.Geometry.elements;
 dataPostProcessing.Permeability = ...
     obj.Problem.Materials;
 
-err_el = zeros(1,Nel);
-init_phi = cell(1,Nel);
+% err_el = zeros(1,Nel);
+% init_phi = cell(1,Nel);
 % Count the periodic unknowns
 % per_points = eval(['[',xml2matlab(obj.Problem.xmlContent...
 %     ,'BoundaryConditions',0,'periodic_points','Attribute'),'];']);
@@ -47,12 +47,12 @@ init_phi = cell(1,Nel);
 %     ,'BoundaryConditions',0,'periodic_lines','Attribute'),'];']);
 
 
-% tot_unknowns = (obj.Physics.ProblemData.inElementsUnknowns + ...
-%     obj.Physics.ProblemData.linesUnknowns + obj.Physics.ProblemData.Np);
+tot_unknowns = (obj.Physics.ProblemData.inElementsUnknowns + ...
+    obj.Physics.ProblemData.linesUnknowns + obj.Physics.ProblemData.Np);
 % e_node = obj.Physics.ProblemData.lineVectorLocation;
 % c_node = obj.Physics.ProblemData.pointVectorLocation;
 
-% SEM_index = 1:tot_unknowns;
+SEM_index = 1:tot_unknowns;
 
 % for k = per_points
 %     SEM_index(c_node(k),:)  = 0;
@@ -67,10 +67,10 @@ init_phi = cell(1,Nel);
 % SEM_index(SEM_index==0) = [];
 
 
-for k = 1:Nel
-    init_phi{k} = zeros(size(obj.Problem.metrics.J{k}));
-    
-end
+% for k = 1:Nel
+%     init_phi{k} = zeros(size(obj.Problem.metrics.J{k}));
+%     
+% end
 % Newton Raphson solver
 tic
 fprintf('Starting the nonlinear solver %.4f \n',toc);
@@ -86,23 +86,19 @@ for ii = 1:iter
     if isempty(obj.Fourier)
         fourier_index = [];
     else
-        s_time = toc;
-        disp('Bulding the Fourier frequency matrix')
         space2freq = obj.Fourier_matrix.Efrequency;
-        fprintf('Computation time for frequency matrix is %.4f \n',toc - s_time)
-        disp('Bulding the Fourier space matrix')
-        s_time = toc;
         freq2space = obj.Fourier_matrix.Espace;
-        fprintf('Computation time for space matrix is %.4f \n',toc - s_time)
         fourier_index = (1:(size(freq2space,2))) + size(freq2space,1);
 %         E = zeros(fourier_index(end));
         s_time = toc;
         
         disp('Concatenating SEM and Fourier Matrices')
-        E = [obj.Problem.Global_Matrix freq2space; space2freq];
-        Y = [obj.Problem.Y.vector zeros(1,size(space2freq,1))];
-        fprintf('Computation time for concatenation is %.4f \n',toc - s_time)
+%         E = [obj.Problem.Global_Matrix freq2space; space2freq];
         
+        E1 = cat(2,obj.Problem.Global_Matrix,freq2space);
+        E = cat(1,E1,space2freq);
+        Y = cat(2,obj.Problem.Y.vector, zeros(1,size(space2freq,1)));
+        fprintf('Computation time for concatenation is %.4f \n',toc - s_time)
         
     end
 %     index = [SEM_index fourier_index ];
@@ -133,22 +129,11 @@ for ii = 1:iter
         obj.Problem.Materials,obj.Geometry.GeometryElement);
     
     
-    for  k = 1:Nel
-        err_el(k) = sqrt(sum(((init_phi{k}(:) - obj.PProcessing.Potential{k}(:)).^2).*obj.Geometry.metrics.J{k}(:).*obj.Geometry.metrics.W{k}(:)));
-        obj.NonlinearSolver.MU{ii,k} = MU{k};
-        obj.NonlinearSolver.K{ii,k}  = KK{k};
-    end
-    
-    if any(ii==[5 10 15])
-        for k = 1:Nel
-            MU{k} = MU{k} - (-obj.NonlinearSolver.MU{ii-1,k} + MU{k})*0.1;
-            KK{k} = KK{k} - (-obj.NonlinearSolver.K{ii-1,k}  + KK{k})*0.1;
-        end
-    end
-    err(ii) = max(err_el);
+    err(ii)  = max(abs(PHI(SEM_index)-prev_PHI(SEM_index)));
+    prev_PHI = PHI(SEM_index);
     
     %                 prev_PHI = PHI;
-    init_phi = obj.PProcessing.Potential;
+%     init_phi = obj.PProcessing.Potential;
     %----------------------------------------------------------
     % Display the iterations
     %----------------------------------------------------------
@@ -182,8 +167,13 @@ for ii = 1:iter
         new_material.Permeability = MU;
         obj.Problem = obj.Problem.updateMaterials(new_material);
         MagMatrix = obj.Problem.global_matrix_contour(KK);
-        Y_mag = MagMatrix*PHI;
         
+        if isempty(obj.Fourier)
+            Y_mag = MagMatrix*PHI(SEM_index);
+        else
+            Y_mag = [MagMatrix*PHI(SEM_index); ...
+                zeros(size(obj.Fourier_matrix.Efrequency,1),1)];
+        end
         %------------------------------------------------------
         % Check if converged
         %------------------------------------------------------
@@ -206,11 +196,11 @@ for ii = 1:iter
 end
 
 if max(abs(Y_mag)>0)
-    PHI_rem = obj.Problem.Global_Matrix\Y_mag;
+    PHI_rem = obj.Problem.Global_Matrix\Y_mag(SEM_index);
 else
-    PHI_rem = PHI*0;
+    PHI_rem = PHI(SEM_index)*0;
 end
-dataPostProcessing.PHI = PHI_rem;
+dataPostProcessing.PHI = PHI_rem(SEM_index);
 
 Pp = PostProcessing(dataPostProcessing);
 

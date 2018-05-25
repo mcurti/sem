@@ -8,7 +8,6 @@
 classdef SEM < matlab.mixin.SetGet
     %SEM Summary of this class goes here
     %   Detailed explanation goes here
-    
     properties
         Geometry; % The instance of the Geometry class
         Physics;  % The instance of the Physics class
@@ -39,6 +38,7 @@ classdef SEM < matlab.mixin.SetGet
                                                % iterations
             % Storing the instance of the Geometry class
             disp('SEM - Building the geometry')
+            
             obj.Geometry = Geometry(filename);
             
             % Storing the instance of the Physics class
@@ -67,13 +67,21 @@ classdef SEM < matlab.mixin.SetGet
             % Fourier Regions
             %==============================================================
             try
-               obj.Fourier = FourierElement(obj.Physics.xmlContent,obj.Geometry);
+                tic
+                obj.Fourier = FourierElement(obj.Physics.xmlContent,obj.Geometry);
                 % Building the Fourier to space tranformation matrix
+                disp('Bulding the Fourier space matrix')
+                s_time = toc;
                 Espace = obj.Fourier.fourier_space_matrix...
-                                                 (obj.Problem.ProblemData);
+                    (obj.Problem.ProblemData);
                 
+                fprintf('Computation time for space matrix is %.4f \n',toc - s_time)
+                
+                disp('Bulding the Fourier frequency matrix')
+                s_time = toc;
                 Efrequency = obj.Fourier.fourier_frequency_matrix...
-                                                 (obj.Problem.ProblemData);
+                    (obj.Problem.ProblemData);
+                fprintf('Computation time for frequency matrix is %.4f \n',toc - s_time)
                 % Storing matrices
                 obj.Fourier_matrix.Espace        = Espace;
                 obj.Fourier_matrix.Efrequency    = Efrequency;

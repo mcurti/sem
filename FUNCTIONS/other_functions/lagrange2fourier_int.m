@@ -53,9 +53,6 @@ for ii = 1:50
         tau       = (x{end}(end) - x{1}(1))/2;
         % Period of the function
         w_i       = (1:Q)'*pi/tau;% Calculated frequencies based on Q
-        M         = Qk;          % Size of the integration vector
-        % Calculating the nodes and weights for the integration
-        [x_int, w_int] = LegendreGausLobattoNodesAndWeights(M);
         
         
         % Evaluate the basis functions per interval
@@ -64,6 +61,9 @@ for ii = 1:50
         
         for k = 1:Nel
             Nnodes(k) = numel(x{k});
+            M         = Nnodes(k)*ii;          % Size of the integration vector
+            % Calculating the nodes and weights for the integration
+            [x_int, w_int] = LegendreGausLobattoNodesAndWeights(M);
             
             % Scaling the nodes and weights
             x_int_n = n2range(x_int,x{k}(1),x{k}(end));

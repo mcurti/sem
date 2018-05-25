@@ -7,7 +7,7 @@
 % and value extracted from .xml file
 %==========================================================================
 function parameter_loader( parameters )
-K = length(parameters);
+[K, ~] = size(parameters);
 % Loading in the local workspace
 
 check_list = false(1,K);

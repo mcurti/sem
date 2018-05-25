@@ -15,7 +15,7 @@ end
 % Intialisation
 type = obj.Edata.type;
 Q  = obj.Edata.Harmonics; 
-x1 = obj.Edata.x_start;       x2 = x1 + obj.Edata.tau;
+x1 = 0;       x2 = x1 + obj.Edata.tau;
 y1 = obj.Edata.heights(El,2); y2 = obj.Edata.heights(El,1);
 
 C1 = obj.c1((1:Q) + (El-1)*Q);   C2 = obj.c2((1:Q) + (El-1)*Q);
