@@ -17,6 +17,14 @@ conn_El{2}    = obj.SEMdata.Elements_bot;
 type          = obj.Edata.type;
 conn_point{1} = obj.SEMdata.lines.connectivity(conn_lines{1},:);
 conn_point{2} = obj.SEMdata.lines.connectivity(conn_lines{2},:);
+
+if conn_point{1}(1,1) == conn_point{1}(end,2) || ...
+                                 conn_point{1}(1,2) == conn_point{1}(end,1)
+    periodic = 0;
+else
+    periodic = 1;
+end
+    
 Nel(1)        = numel(conn_lines{1}); % Number of elements
 Nel(2)        = numel(conn_lines{2}); % Number of elements
 Nnodes{1}     = zeros(1,Nel(1));      % Number of nodes in each element
@@ -62,7 +70,7 @@ for q = 1:2
         
         theta = atan2(y,x);
         
-        theta(theta< -pi/2) = 2*pi - abs(theta(theta< -pi/2));
+%         theta(theta< -pi/2) = 2*pi - abs(theta(theta< -pi/2));
         
         
         if strcmp(type,'polar')
@@ -72,10 +80,11 @@ for q = 1:2
         end
         
         if k==1
-            xi_fourier{q}(1:Nnodes{q}(1)) = xi;
+            xi_fourier{q}(1:Nnodes{q}(1)) = n2range(xi,theta(1)-theta(end),0);
+            
             w_fourier{q}(1:Nnodes{q}(1)) = obj.SEMdata.xi.w_for_all_lines{l}'.*neu2;
         else
-            xi_fourier{q}((0:Nnodes{q}(k)-1) + currentIndex) = xi;
+            xi_fourier{q}((0:Nnodes{q}(k)-1) + currentIndex) = n2range(xi,xi_fourier{q}(currentIndex)+(theta(1)-theta(end)),xi_fourier{q}(currentIndex));
             w_fourier{q}((0:Nnodes{q}(k)-1) + currentIndex) = ...
                 w_fourier{q}((0:Nnodes{q}(k)-1) + currentIndex) + ...
                 obj.SEMdata.xi.w_for_all_lines{l}'.*neu2;
@@ -84,11 +93,11 @@ for q = 1:2
         end
     end
     
-    if strcmp(type,'polar')
-        theta_start = xi_fourier{q}(1);
-        theta_sign  = sign(xi_fourier{q}(end) - xi_fourier{q}(1));
-        xi_fourier{q} = (xi_fourier{q} - theta_start)*theta_sign;
-    end
+%     if strcmp(type,'polar')
+%         theta_start = xi_fourier{q}(1);
+%         theta_sign  = sign(xi_fourier{q}(end) - xi_fourier{q}(1));
+%         xi_fourier{q} = (xi_fourier{q} - theta_start)*theta_sign;
+%     end
     w_fourier{q}([1 end]) = w_fourier{q}(1) + w_fourier{q}(end);
 end
 % Removing the last entry in the vectors
@@ -133,7 +142,13 @@ for k = 1:2
     
     % Computing the Espace_block address in the Espace
     unique_points = unique(conn_point{k},'stable');
-    unique_points(end) = [];
+    
+    if periodic
+        unique_points(end) = [];
+%     else
+%         unique_points = circshift(unique_points,1);
+    end
+        
     
     index_space = [ProblemData.lineVectorLocation{conn_lines{k}}...
         ProblemData.pointVectorLocation(unique_points)];

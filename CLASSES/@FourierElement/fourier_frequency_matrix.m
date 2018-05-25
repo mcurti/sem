@@ -16,6 +16,13 @@ conn_lines{2} = obj.SEMdata.Lines_bot;
 % conn_El{2}    = obj.SEMdata.Elements_bot;
 conn_point{1} = obj.SEMdata.lines.connectivity(conn_lines{1},:);
 conn_point{2} = obj.SEMdata.lines.connectivity(conn_lines{2},:);
+if conn_point{1}(1,1) == conn_point{1}(end,2) || ...
+                                 conn_point{1}(1,2) == conn_point{1}(end,1)
+    periodic = 0;
+else
+    periodic = 1;
+end
+
 Nel(1)        = numel(conn_lines{1}); % Number of elements
 Nel(2)        = numel(conn_lines{2}); % Number of elements
 Nnodes{1}     = zeros(1,Nel(1));      % Number of nodes in each element
@@ -85,15 +92,18 @@ for q = 1:2
         
         theta = atan2(y,x);
         
-        theta(theta< -pi/2) = 2*pi - abs(theta(theta< -pi/2));
+%         theta(theta< -pi/2) = 2*pi - abs(theta(theta< -pi/2));
         
         
         if strcmp(type,'polar')
             if k == 1
-            theta_start = theta(1);
-            theta_sign  = sign(theta(end) - theta(1));
+            theta_start = 0;
+%             theta_sign  = sign(theta(end) - theta(1));
+            else 
+                
+            theta_start = xi_fourier{k-1}(end);
             end
-            xi = (theta - theta_start)*theta_sign;
+            xi = n2range(theta,theta_start+(theta(1) - theta(end)),theta_start);
         else
             xi = x;
         end
@@ -113,7 +123,11 @@ for q = 1:2
     Ib(:,[1 end]) = repmat(Ib(:,1)+Ib(:,end),1,2);
     
     unique_points = unique(conn_point{q},'stable');
-    unique_points(end) = [];
+    if periodic
+        unique_points(end) = [];
+        %     else
+        %         unique_points = circshift(unique_points,1);
+    end
     index_space = [ProblemData.lineVectorLocation{conn_lines{q}}...
         ProblemData.pointVectorLocation(unique_points)];
     

@@ -130,6 +130,15 @@ classdef Geometry
                               (points(connectivity(1),:),...
                                points(connectivity(2),:)...
                                                    ,csi_grid',Pc,LineType);
+                                               
+                          case 'trace'
+                              % get corresponding trace id
+                              trace_id = eval(xml2matlab(A,'line',k-1,...
+                                  'trace_id','Attribute'));
+                              % get trace points
+                              trace = eval(A.getElementsByTagName('trace')...
+                              .item(trace_id-1).getFirstChild.getTextContent);
+                              [temp_line_x, temp_line_y] = DistrSpline(trace',csi);
                       end
                 lines{k} = [temp_line_x; temp_line_y];
                 grid_lines{k} = [temp_grid_x; temp_grid_y];
