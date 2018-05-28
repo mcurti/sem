@@ -89,7 +89,7 @@ classdef Problem < matlab.mixin.SetGet
                 % Getting the connectivity of the lines and points of
                 % k-th element
                 if any(k==elementsData.periodic)
-                    line_element  = elementsData.periodic_lines(k,:);
+                    line_element  = abs(elementsData.periodic_lines(k,:));
                     point_element = elementsData.periodic_points(k,:);
                     line_element_no_abs = line_element;
                 else

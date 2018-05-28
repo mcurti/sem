@@ -30,11 +30,11 @@ classdef SEM < matlab.mixin.SetGet
             
             % Loading the default settings
             % - Settings for the nonlinear solver
-            obj.NonlinearSolver.max_iter = 30;   % Maximum iterations for
+            obj.NonlinearSolver.max_iter = 5;   % Maximum iterations for
                                                % the nonlinear solver
             obj.NonlinearSolver.tol    = 1e-4;   % Maximum tolerance for
                                                % the nonlinear solver
-            obj.NonlinearSolver.display = 'off'; % Show or hide the solver 
+            obj.NonlinearSolver.display = 'on'; % Show or hide the solver 
                                                % iterations
             % Storing the instance of the Geometry class
             disp('SEM - Building the geometry')

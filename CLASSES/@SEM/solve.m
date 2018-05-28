@@ -129,7 +129,7 @@ for ii = 1:iter
         obj.Problem.Materials,obj.Geometry.GeometryElement);
     
     
-    err(ii)  = max(abs(PHI(SEM_index)-prev_PHI(SEM_index)));
+    err(ii)  = max(abs(PHI(SEM_index)-prev_PHI(SEM_index)))/max(PHI(SEM_index));
     prev_PHI = PHI(SEM_index);
     
     %                 prev_PHI = PHI;
