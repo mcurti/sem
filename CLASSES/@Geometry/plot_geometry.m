@@ -79,7 +79,7 @@ switch mode
             
             temp_line = obj.lines.vector{k};
             middle = round(numel(temp_line(1,:))/2);
-            text(temp_line(1,middle),temp_line(2,middle),sprintf('%d',k),'HorizontalAlignment','right','Color','green')
+            text(temp_line(1,middle),temp_line(2,middle),sprintf('%d',k),'HorizontalAlignment','right','Color','blue')
             
             
         end

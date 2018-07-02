@@ -15,17 +15,24 @@ err = zeros(1,iter);
 obj.NonlinearSolver.MU = cell(iter,Nel);
 obj.NonlinearSolver.K  = cell(iter,Nel);
 
+tot_unknowns = (obj.Physics.ProblemData.inElementsUnknowns + ...
+    obj.Physics.ProblemData.linesUnknowns + obj.Physics.ProblemData.Np);
 if isempty(obj.Fourier)
-    Y_mag = ...
-        zeros(obj.Problem.ProblemData.pointVectorLocation(end),1);
+    fourier_index = [];
+    spc = tot_unknowns;
+    Y_mag = zeros(obj.Problem.ProblemData.pointVectorLocation(end),1);
 else
+    space2freq = obj.Fourier_matrix.Efrequency;
+    freq2space = obj.Fourier_matrix.Espace;
+    fourier_index = (1:(size(freq2space,2))) + size(freq2space,1);
+    [spr, spc] = size(space2freq); [frr, frc] = size(freq2space);
     Y_mag = [zeros(...
         obj.Problem.ProblemData.pointVectorLocation(end),1); ...
         zeros(size(obj.Fourier_matrix.Efrequency,1),1)];
 end
-            prev_PHI = Y_mag;
+prev_PHI = Y_mag;
 
-
+E = zeros(spc);
 dataPostProcessing.xmlContent   = ...
     obj.Geometry.GeometryElement;
 dataPostProcessing.ProblemData  = obj.Physics.ProblemData;
@@ -47,8 +54,6 @@ dataPostProcessing.Permeability = ...
 %     ,'BoundaryConditions',0,'periodic_lines','Attribute'),'];']);
 
 
-tot_unknowns = (obj.Physics.ProblemData.inElementsUnknowns + ...
-    obj.Physics.ProblemData.linesUnknowns + obj.Physics.ProblemData.Np);
 % e_node = obj.Physics.ProblemData.lineVectorLocation;
 % c_node = obj.Physics.ProblemData.pointVectorLocation;
 
@@ -57,19 +62,19 @@ SEM_index = 1:tot_unknowns;
 % for k = per_points
 %     SEM_index(c_node(k),:)  = 0;
 % end
-% 
+%
 % % lines
 % for k = per_lines
-%     
+%
 %     SEM_index(e_node{k},:) = 0;
 % end
-% 
+%
 % SEM_index(SEM_index==0) = [];
 
 
 % for k = 1:Nel
 %     init_phi{k} = zeros(size(obj.Problem.metrics.J{k}));
-%     
+%
 % end
 % Newton Raphson solver
 tic
@@ -77,63 +82,106 @@ fprintf('Starting the nonlinear solver %.4f \n',toc);
 
 for ii = 1:iter
     
+    % Loading the Fourier matrices
+    if ii==1
+        %-----------------------------------------------------
+        filename = ['PHI' num2str(numel(prev_PHI)) '.mat'];
+        try
+            load(filename,'PHI')
+            
+        catch
+            disp('No initial solution saved')
+            PHI = prev_PHI;
+        end
+        %-----------------------------------------------------
+    end
+    %         E = zeros(fourier_index(end));
+    
     fprintf('Building the global matrix at iteration %d \n'...
         ,ii);
-    obj.Problem = obj.Problem.global_matrix;
-    E = obj.Problem.Global_Matrix;
-    Y = obj.Problem.Y.vector;
-    % Loading the Fourier matrices
-    if isempty(obj.Fourier)
-        fourier_index = [];
-    else
-        space2freq = obj.Fourier_matrix.Efrequency;
-        freq2space = obj.Fourier_matrix.Espace;
-        fourier_index = (1:(size(freq2space,2))) + size(freq2space,1);
-%         E = zeros(fourier_index(end));
-        s_time = toc;
-        
-        disp('Concatenating SEM and Fourier Matrices')
-%         E = [obj.Problem.Global_Matrix freq2space; space2freq];
-        
-        E1 = cat(2,obj.Problem.Global_Matrix,freq2space);
-        E = cat(1,E1,space2freq);
-        Y = cat(2,obj.Problem.Y.vector, zeros(1,size(space2freq,1)));
-        fprintf('Computation time for concatenation is %.4f \n',toc - s_time)
-        
-    end
-%     index = [SEM_index fourier_index ];
-%     PHI = zeros(1,(tot_unknowns+numel(fourier_index)));
-    
-    fprintf('Start solving the linear system at time %.4f \n'...
-        ,toc);
-    s_time = toc;
-    
-    S = sparse(E);
-    
-    PHI = S\(Y' + Y_mag);
-    
-    fprintf('Linear system solved in  %.4f seconds \n', ...
-        toc - s_time);
-    %% pause
-    
-    dataPostProcessing.PHI          = PHI;
-    dataPostProcessing.PHI(fourier_index) = [];
-    
-    disp('Evaluating the convergece')
-    
-    
+    delta_PHI = PHI(SEM_index) - prev_PHI(SEM_index);
+    dataPostProcessing.PHI          = delta_PHI*0 + PHI(SEM_index);
+    %         dataPostProcessing.PHI = [];
     obj.PProcessing = PostProcessing(dataPostProcessing);
     obj.PProcessing = obj.PProcessing.compute_B;
     
     [MU, KK, ne]  = obj.PProcessing.get_next_permeability(...
         obj.Problem.Materials,obj.Geometry.GeometryElement);
     
+    %------------------------------------------------------
+    % Update the permeability
+    %------------------------------------------------------
+    new_material.Permeability = MU;
+    obj.Problem = obj.Problem.updateMaterials(new_material);
+    MagMatrix = obj.Problem.global_matrix_contour(KK);
     
-    err(ii)  = max(abs(PHI(SEM_index)-prev_PHI(SEM_index)))/max(PHI(SEM_index));
+    if isempty(obj.Fourier)
+        Y_mag = MagMatrix*PHI(SEM_index);
+    else
+        Y_mag = [MagMatrix*PHI(SEM_index); ...
+            zeros(size(obj.Fourier_matrix.Efrequency,1),1)];
+    end
+    
+    obj.Problem = obj.Problem.global_matrix;
+    
+    s_time = toc;
+    
+    disp('Concatenating SEM and Fourier Matrices')
+    %         E = [obj.Problem.Global_Matrix freq2space; space2freq];
+    
+    
+    
+    %         E1 = cat(2,obj.Problem.Global_Matrix,freq2space);
+    %         E = cat(1,E1,space2freq);
+    
+    if isempty(obj.Fourier)
+        E = obj.Problem.Global_Matrix;
+        Y = obj.Problem.Y.vector;
+    else
+        E(SEM_index,SEM_index) = obj.Problem.Global_Matrix;
+        if ii == 1
+            E(end-spr+1:end,end-spc+1:end) = space2freq;
+            E(SEM_index(end)-frr+1:SEM_index(end),end-frc+1:end) = freq2space;
+        end
+        Y = cat(2,obj.Problem.Y.vector, zeros(1,size(space2freq,1)));
+    end
+    fprintf('Computation time for concatenation is %.4f \n',toc - s_time)
+    
+    
+    %     index = [SEM_index fourier_index ];
+    %     PHI = zeros(1,(tot_unknowns+numel(fourier_index)));
+    
+    fprintf('Start solving the linear system at time %.4f \n'...
+        ,toc);
+    
+    
+    s_time = toc;
+    
+    S = sparse(E);
+    
+    PHI = S\(Y' + Y_mag);
+    
+    save(filename,'PHI');
+    fprintf('Linear system solved in  %.4f seconds \n', ...
+        toc - s_time);
+    %% pause
+    
+    %     dataPostProcessing.PHI          = PHI;
+    %     dataPostProcessing.PHI(fourier_index) = [];
+    
+    disp('Evaluating the convergece')
+    
+    
+    %     obj.PProcessing = PostProcessing(dataPostProcessing);
+    
+    
+    
+    
+    err(ii)  = mean(abs(PHI(SEM_index)-prev_PHI(SEM_index)))/mean(abs(PHI(SEM_index)));
     prev_PHI = PHI(SEM_index);
     
     %                 prev_PHI = PHI;
-%     init_phi = obj.PProcessing.Potential;
+    %     init_phi = obj.PProcessing.Potential;
     %----------------------------------------------------------
     % Display the iterations
     %----------------------------------------------------------
@@ -147,7 +195,7 @@ for ii = 1:iter
             obj.NonlinearSolver.tol*ones(1,iter),'-r')
         hold off
         xlim([1 iter])
-        ylim([obj.NonlinearSolver.tol*.5 err(1)])
+        ylim([obj.NonlinearSolver.tol*.5 err(1)*5])
         xlabel('iterations')
         ylabel('norm')
         figure_config(100,15,5,8)
@@ -161,19 +209,6 @@ for ii = 1:iter
         disp('linear system detected, solved with one iteration')
         break
     else
-        %------------------------------------------------------
-        % Update the permeability
-        %------------------------------------------------------
-        new_material.Permeability = MU;
-        obj.Problem = obj.Problem.updateMaterials(new_material);
-        MagMatrix = obj.Problem.global_matrix_contour(KK);
-        
-        if isempty(obj.Fourier)
-            Y_mag = MagMatrix*PHI(SEM_index);
-        else
-            Y_mag = [MagMatrix*PHI(SEM_index); ...
-                zeros(size(obj.Fourier_matrix.Efrequency,1),1)];
-        end
         %------------------------------------------------------
         % Check if converged
         %------------------------------------------------------
@@ -196,9 +231,11 @@ for ii = 1:iter
 end
 
 if max(abs(Y_mag)>0)
-    PHI_rem = obj.Problem.Global_Matrix\Y_mag(SEM_index);
+    PHI_rem = S(SEM_index,SEM_index)\Y_mag(SEM_index);
 else
     PHI_rem = PHI(SEM_index)*0;
+    dataPostProcessing.PHI = PHI(SEM_index);
+    obj.PProcessing = PostProcessing(dataPostProcessing);
 end
 dataPostProcessing.PHI = PHI_rem(SEM_index);
 

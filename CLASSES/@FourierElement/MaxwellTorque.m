@@ -45,7 +45,7 @@ switch type
         at = -((hp.*C1') + (hn.*C2'));
         bt = -((hp.*C3') + (hn.*C4'));
         
-        Fx(k) = (sum(ar.*at) +  sum(br.*bt))/(pi*4e-7)*(y_j(k))^2*(obj.Edata.tau);
+        Fx(k) = (ar'*at +  br'*bt)/(pi*4e-7)*(y_j(k))^2*(obj.Edata.tau);
         end
         Fx = mean(Fx);
 end
