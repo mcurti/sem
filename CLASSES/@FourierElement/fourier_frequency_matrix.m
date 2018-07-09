@@ -91,7 +91,9 @@ for q = 1:2
         y = obj.SEMdata.lines.vector{conn_lines{q}(k)}(2,:);
         
         theta = atan2(y,x);
-        
+        if theta(end) > pi/2 && theta(1) < -pi/2
+            theta(theta<0) = theta(theta<0)+2*pi; 
+        end
 %         theta(theta< -pi/2) = 2*pi - abs(theta(theta< -pi/2));
         
         
@@ -103,7 +105,7 @@ for q = 1:2
                 
             theta_start = xi_fourier{k-1}(end);
             end
-            xi = n2range(theta,theta_start+(theta(1) - theta(end)),theta_start);
+            xi = n2range(theta,theta_start+abs(theta(1) - theta(end)),theta_start);
         else
             xi = x;
         end

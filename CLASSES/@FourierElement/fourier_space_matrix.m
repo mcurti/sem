@@ -69,7 +69,9 @@ for q = 1:2
         y = obj.SEMdata.lines.vector{l}(2,:);
         
         theta = atan2(y,x);
-        
+         if theta(end) > pi/2 && theta(1) < -pi/2
+            theta(theta<0) = theta(theta<0)+2*pi; 
+        end
 %         theta(theta< -pi/2) = 2*pi - abs(theta(theta< -pi/2));
         
         
@@ -80,11 +82,11 @@ for q = 1:2
         end
         
         if k==1
-            xi_fourier{q}(1:Nnodes{q}(1)) = n2range(xi,theta(1)-theta(end),0);
+            xi_fourier{q}(1:Nnodes{q}(1)) = n2range(xi,abs(theta(1)-theta(end)),0);
             
             w_fourier{q}(1:Nnodes{q}(1)) = obj.SEMdata.xi.w_for_all_lines{l}'.*neu2;
         else
-            xi_fourier{q}((0:Nnodes{q}(k)-1) + currentIndex) = n2range(xi,xi_fourier{q}(currentIndex)+(theta(1)-theta(end)),xi_fourier{q}(currentIndex));
+            xi_fourier{q}((0:Nnodes{q}(k)-1) + currentIndex) = n2range(xi,xi_fourier{q}(currentIndex)+abs(theta(1)-theta(end)),xi_fourier{q}(currentIndex));
             w_fourier{q}((0:Nnodes{q}(k)-1) + currentIndex) = ...
                 w_fourier{q}((0:Nnodes{q}(k)-1) + currentIndex) + ...
                 obj.SEMdata.xi.w_for_all_lines{l}'.*neu2;
