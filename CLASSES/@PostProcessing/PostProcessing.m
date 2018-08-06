@@ -165,10 +165,14 @@ classdef PostProcessing < matlab.mixin.SetGet
         %------------------------------------------------------------------
         % Plot a quantity on SEM nodes
         %------------------------------------------------------------------
-        function plot_surf_var(obj,var)
+        function plot_surf_var(obj,var,elements)
             Nel = obj.ProblemData.Nel;
-                       
-                    for k = 1:Nel
+                       try
+                           el_list = elements;
+                       catch
+                           el_list = 1:Nel;
+                       end
+                    for k = el_list
                         surf(obj.mappings.Xm{k},obj.mappings.Ym{k},...
                             var{k},'edgecolor','none');
                     end

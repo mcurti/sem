@@ -1,4 +1,3 @@
-
 %------------------------------------------------------------------
 % Interpolate to all FEM nodes
 %------------------------------------------------------------------
@@ -8,6 +7,7 @@ function  SEM = InterpolateOnFEMNodes(obj,allFEM)
 % Initialising the data
 SEM.potential = zeros(size(allFEM.all_x_nodes));
 SEM.abs_Flux  = zeros(size(allFEM.all_x_nodes));
+interpolation  = true(size(allFEM.all_x_nodes));
 Nel = obj.ProblemData.Nel;
 el_list           = 1:Nel;
 obj.FEM.x_mesh    = cell(1,Nel);
@@ -17,7 +17,7 @@ obj.FEM.potential = cell(1,Nel);
 obj.FEM.Flux_abs  = cell(1,Nel);
 s                 = cell(2,4);
 options = optimoptions('fsolve','Display','off',...
-    'FunctionTolerance',1e-8);
+    'FunctionTolerance',1e-10);
 
 % Element list
 try
@@ -26,21 +26,17 @@ catch
     disp('interpolating with all elements')
 end
 
-% the loop for all FEM nodes
-for ii = 1:length(allFEM.all_x_nodes)
-    
-    x_fem = allFEM.all_x_nodes(ii);
-    y_fem = allFEM.all_y_nodes(ii);
-    interpolated = false;
-    
-    
-    % Check if init values are present
-    if exist('csi_init','var')
-    else
-        csi_init = 1-2*rand(1); eta_init = 1-2*rand(1);
-    end
-    % the loop for each element
-    try
+
+
+% Check if init values are present
+if exist('csi_init','var')
+else
+    csi_init = 1-2*rand(1); eta_init = 1-2*rand(1);
+end
+% the loop for each element
+try
+    for ii = 1:length(allFEM.all_x_nodes)
+        if allFEM.int.interpolated(ii)
         tmp = allFEM.int;
         el  = tmp.element(ii);
         csi_i = tmp.csi(ii);
@@ -52,11 +48,23 @@ for ii = 1:length(allFEM.all_x_nodes)
         lxy        = PolynomialInterp12D(csi_i,eta_i,X,Y);
         SEM.potential(ii)   = lxy*obj.Potential{el}(:);
         SEM.abs_Flux(ii)    = lxy*obj.Flux.abs{el}(:)*1e3;
-    catch
+        end
+    end
+        SEM.interpolated = allFEM.int.interpolated;
+        SEM.int.interpolated = allFEM.int.interpolated;
+catch
+    wb = waitbar(0,'Interpolating on FEM nodes');
+    p = length(allFEM.all_x_nodes);
+    for ii = 1:p
+        waitbar(ii/p,wb)
+        % the loop for all FEM nodes
+        
+        x_fem = allFEM.all_x_nodes(ii);
+        y_fem = allFEM.all_y_nodes(ii);
+        interpolated = false;
         for jj = el_list
-            clc
-            fprintf('interpolation on node %d from %d in the element %d\n',ii,...
-                length(allFEM.all_x_nodes),jj);
+            %             clc
+            
             connectivity = abs(obj.elements.lines(jj,:));
             
             for k = 1:4
@@ -98,8 +106,8 @@ for ii = 1:length(allFEM.all_x_nodes)
                 
                 csi_i = out(1); eta_i = out(2);
                 
-                if abs(round(csi_i,6)) <= 1 && ...
-                        abs(round(eta_i,6)) <= 1 && exitflag > 0
+                if abs(round(csi_i,5)) <= 1 && ...
+                        abs(round(eta_i,5)) <= 1 && exitflag > 0
                     [X, Y] = meshgrid(csi, eta);
                     lxy        = PolynomialInterp2D(csi_i,eta_i,X,Y);
                     
@@ -112,12 +120,28 @@ for ii = 1:length(allFEM.all_x_nodes)
                     csi_init = out(1); eta_init = out(2);
                 end
             end
-            
             % Break the element loop if interpolated
             if interpolated
+%                 message = sprintf('interpolation on node %d from %d in the element %d',ii,...
+%                     length(allFEM.all_x_nodes),jj);
+%                 fprintf(message);
+                cid = find(el_list==jj);
+                if cid < Nel
+                    el_list = [circshift(el_list(1:cid),1) ...
+                        el_list(cid+1:end)];
+                end
+                
+%                 fprintf(repmat('\b', 1, numel(message)));
                 break
+            elseif jj == el_list(end) && interpolated == false
+                fprintf('\n');
+                warning('Point %d - %.4f %.4f not interpolated',ii, x_fem, y_fem)
+                interpolation(ii) = false;
+                %                 pause
             end
         end
     end
+    SEM.int.interpolated = interpolation;
+    SEM.interpolated = interpolation;
 end
 end
