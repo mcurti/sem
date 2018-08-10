@@ -1,12 +1,11 @@
 function [Permeability, K, nonlin_elem ]= ...
-    get_next_permeability(obj,Materials,xmlContent)
+    get_next_permeability_Nr(obj,Materials,xmlContent)
 % Initial parameters
 
 %             options = optimoptions('fsolve','Display','off',...
 %                 'FunctionTolerance',1e-8);
 mod_B = obj.Flux.abs;
-% B_x   = obj.Flux.x_comp;
-% B_y   = obj.Flux.y_comp;
+% Bx    = obj.Flux.
 Nel   = obj.ProblemData.Nel;
 %             mu0   = pi*4e-7;
 Nr    = eval(xml2matlab(xmlContent,'Regions'...
@@ -76,7 +75,7 @@ for k = 1:Nel
         if min(B(:)==0) && max(B(:))==0
             B = B+0.01e-3;
         end
-        [Brem, ~, Permeability{k}] = bh.BHtool(B*1e3);
+        [Brem, Permeability{k}] = bh.BHtool(B*1e3);
 %         Permeabilitys{k} = bh.permeability(B*1e3);
 %         Permeability{k} = bh.permeability(B*1e3);
         Brem = Brem*1e-3;

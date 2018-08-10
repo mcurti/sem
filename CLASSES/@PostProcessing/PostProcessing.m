@@ -191,8 +191,9 @@ classdef PostProcessing < matlab.mixin.SetGet
             
             % Plot contours
             for k = 1:Nel
-                contour(obj.mappings.Xm{k},obj.mappings.Ym{k},...
+            contour(obj.mappings.Xm{k},obj.mappings.Ym{k},...
                     obj.Potential{k},flux_lines);
+               
             end
         end
         
@@ -372,12 +373,16 @@ end
 
 function [fx, fy] = sem_gradient(f, Lx, Ly, Xxi, Xeta, Yxi, Yeta, J, ...
                                                                ElementSize)
-   fxi  = reshape(Lx*f(:),ElementSize(1),ElementSize(2));
-                   
-   feta = reshape(Ly*f(:),ElementSize(1),ElementSize(2));
-                   
-                   
-   fx = (Yeta.*fxi - Yxi.*feta)./J;
+%    fxi  = reshape(Lx*f(:),ElementSize(1),ElementSize(2));
+%                    
+%    feta = reshape(Ly*f(:),ElementSize(1),ElementSize(2));
+%                    
+%                    
+%    fx = (Yeta.*fxi - Yxi.*feta)./J;
+%    
+%    fy = (-Xeta.*fxi + Xxi.*feta)./J;
+% The same thing in the matrix form
+   fx = reshape(diag(1./J(:))*(diag(Yeta(:))*Lx - diag(Yxi(:))*Ly)*f(:),ElementSize(1),ElementSize(2));
    
-   fy = (-Xeta.*fxi + Xxi.*feta)./J;
+   fy = reshape(diag(1./J(:))*(-diag(Xeta(:))*Lx + diag(Xxi(:))*Ly)*f(:),ElementSize(1),ElementSize(2));
 end

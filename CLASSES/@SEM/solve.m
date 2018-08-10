@@ -30,7 +30,10 @@ else
         obj.Problem.ProblemData.pointVectorLocation(end),1); ...
         zeros(size(obj.Fourier_matrix.Efrequency,1),1)];
 end
+SEM_index = 1:tot_unknowns;
+
 prev_PHI = Y_mag;
+% delta_PHI = prev_PHI(SEM_index);
 
 E = zeros(spc);
 dataPostProcessing.xmlContent   = ...
@@ -57,7 +60,6 @@ dataPostProcessing.Permeability = ...
 % e_node = obj.Physics.ProblemData.lineVectorLocation;
 % c_node = obj.Physics.ProblemData.pointVectorLocation;
 
-SEM_index = 1:tot_unknowns;
 
 % for k = per_points
 %     SEM_index(c_node(k),:)  = 0;
@@ -99,12 +101,22 @@ for ii = 1:iter
     
     fprintf('Building the global matrix at iteration %d \n'...
         ,ii);
-    delta_PHI = PHI(SEM_index) - prev_PHI(SEM_index);
-    dataPostProcessing.PHI          = delta_PHI*0 + PHI(SEM_index);
+    dataPostProcessing.PHI          =  PHI(SEM_index);% + 0*delta_PHI;
     %         dataPostProcessing.PHI = [];
     obj.PProcessing = PostProcessing(dataPostProcessing);
     obj.PProcessing = obj.PProcessing.compute_B;
     
+    bh = bh_class(2);
+    figure(11)
+    if ii ==1
+    clf
+    plot(0:.01:2.2,ppval(bh.Extrap_Spline_B,0:.01:2.2)-5.500778160865974e+04)
+    end
+    hold on
+    plot(obj.PProcessing.Flux.abs{1,17}(12,3)*1e3,ppval(bh.Extrap_Spline_B,obj.PProcessing.Flux.abs{1,17}(12,3)*1e3)-5.500778160865974e+04,'o')
+    text(obj.PProcessing.Flux.abs{1,17}(12,3)*1e3,ppval(bh.Extrap_Spline_B,obj.PProcessing.Flux.abs{1,17}(12,3)*1e3)-5.500778160865974e+04,sprintf('%d',ii))
+    hold off
+
     [MU, KK, ne]  = obj.PProcessing.get_next_permeability(...
         obj.Problem.Materials,obj.Geometry.GeometryElement);
     
@@ -114,11 +126,11 @@ for ii = 1:iter
     new_material.Permeability = MU;
     obj.Problem = obj.Problem.updateMaterials(new_material);
     MagMatrix = obj.Problem.global_matrix_contour(KK);
-    
+    JacMatrix = obj.Problem.global_matrix_jacobian(KK,obj.PProcessing.Potential);
     if isempty(obj.Fourier)
-        Y_mag = MagMatrix*PHI(SEM_index);
+        Y_mag = MagMatrix*dataPostProcessing.PHI(SEM_index);
     else
-        Y_mag = [MagMatrix*PHI(SEM_index); ...
+        Y_mag = [MagMatrix*dataPostProcessing.PHI(SEM_index); ...
             zeros(size(obj.Fourier_matrix.Efrequency,1),1)];
     end
     
@@ -158,12 +170,20 @@ for ii = 1:iter
     s_time = toc;
     
     S = sparse(E);
-    
-    PHI = S\(Y' + Y_mag);
-    
-    save(filename,'PHI');
-    fprintf('Linear system solved in  %.4f seconds \n', ...
-        toc - s_time);
+    JacFin = E;
+    JacFin(SEM_index,SEM_index) = JacMatrix; JacFin = sparse(JacFin);
+% %     tmp(SEM_index,SEM_index) = JacMatrix - MagMatrix;
+%     
+%     if ii == 1; dS = S;  prevS = S; else
+%         dS = S - prevS;
+%     end
+%     dS = S; dS(SEM_index,SEM_index) = S(SEM_index,SEM_index) - sparse(MagMatrix);
+%     PHI = S\(Y' + Y_mag);% + S\Y_mag;
+%     if ii == 1; phi = [PHI; zeros(size(obj.Fourier_matrix.Efrequency,1),1)]; else, phi = PHI; end
+    delta_PHI = JacFin\(-S*PHI + Y' + Y_mag*0);
+    PHI = PHI + delta_PHI;
+%     save(filename,'PHI');
+    fprintf('Linear system solved in  %.4f seconds \n',toc - s_time);
     %% pause
     
     %     dataPostProcessing.PHI          = PHI;
