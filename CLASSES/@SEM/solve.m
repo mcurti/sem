@@ -48,8 +48,8 @@ dataPostProcessing.elements     = obj.Geometry.elements;
 dataPostProcessing.Permeability = ...
     obj.Problem.Materials;
 
-% err_el = zeros(1,Nel);
-% init_phi = cell(1,Nel);
+err_el = zeros(1,Nel);
+init_phi = cell(1,Nel);
 % Count the periodic unknowns
 % per_points = eval(['[',xml2matlab(obj.Problem.xmlContent...
 %     ,'BoundaryConditions',0,'periodic_points','Attribute'),'];']);
@@ -74,10 +74,10 @@ dataPostProcessing.Permeability = ...
 % SEM_index(SEM_index==0) = [];
 
 
-% for k = 1:Nel
-%     init_phi{k} = zeros(size(obj.Problem.metrics.J{k}));
-%
-% end
+for k = 1:Nel
+    init_phi{k} = zeros(size(obj.Problem.metrics.J{k}));
+
+end
 % Newton Raphson solver
 tic
 fprintf('Starting the nonlinear solver %.4f \n',toc);
@@ -106,16 +106,16 @@ for ii = 1:iter
     obj.PProcessing = PostProcessing(dataPostProcessing);
     obj.PProcessing = obj.PProcessing.compute_B;
     
-    bh = bh_class(2);
-    figure(11)
-    if ii ==1
-    clf
-    plot(0:.01:2.2,ppval(bh.Extrap_Spline_B,0:.01:2.2)-5.500778160865974e+04)
-    end
-    hold on
-    plot(obj.PProcessing.Flux.abs{1,17}(12,3)*1e3,ppval(bh.Extrap_Spline_B,obj.PProcessing.Flux.abs{1,17}(12,3)*1e3)-5.500778160865974e+04,'o')
-    text(obj.PProcessing.Flux.abs{1,17}(12,3)*1e3,ppval(bh.Extrap_Spline_B,obj.PProcessing.Flux.abs{1,17}(12,3)*1e3)-5.500778160865974e+04,sprintf('%d',ii))
-    hold off
+%     bh = bh_class(2);
+%     figure(11)
+%     if ii ==1
+%     clf
+%     plot(0:.01:2.2,ppval(bh.Extrap_Spline_B,0:.01:2.2)-5.500778160865974e+04)
+%     end
+%     hold on
+%     plot(obj.PProcessing.Flux.abs{1,17}(12,3)*1e3,ppval(bh.Extrap_Spline_B,obj.PProcessing.Flux.abs{1,17}(12,3)*1e3)-5.500778160865974e+04,'o')
+%     text(obj.PProcessing.Flux.abs{1,17}(12,3)*1e3,ppval(bh.Extrap_Spline_B,obj.PProcessing.Flux.abs{1,17}(12,3)*1e3)-5.500778160865974e+04,sprintf('%d',ii))
+%     hold off
 
     [MU, KK, ne]  = obj.PProcessing.get_next_permeability(...
         obj.Problem.Materials,obj.Geometry.GeometryElement);
@@ -180,28 +180,32 @@ for ii = 1:iter
 %     dS = S; dS(SEM_index,SEM_index) = S(SEM_index,SEM_index) - sparse(MagMatrix);
 %     PHI = S\(Y' + Y_mag);% + S\Y_mag;
 %     if ii == 1; phi = [PHI; zeros(size(obj.Fourier_matrix.Efrequency,1),1)]; else, phi = PHI; end
-    delta_PHI = JacFin\(-S*PHI + Y' + Y_mag*0);
+    delta_PHI = JacFin\(-S*PHI + Y');% + Y_mag*0);
     PHI = PHI + delta_PHI;
 %     save(filename,'PHI');
     fprintf('Linear system solved in  %.4f seconds \n',toc - s_time);
     %% pause
     
-    %     dataPostProcessing.PHI          = PHI;
-    %     dataPostProcessing.PHI(fourier_index) = [];
+        dataPostProcessing.PHI          = PHI;
+%         dataPostProcessing.PHI(fourier_index) = [];
     
     disp('Evaluating the convergece')
     
     
-    %     obj.PProcessing = PostProcessing(dataPostProcessing);
+        obj.PProcessing = PostProcessing(dataPostProcessing);
     
     
     
     
-    err(ii)  = mean(abs(PHI(SEM_index)-prev_PHI(SEM_index)))/mean(abs(PHI(SEM_index)));
-    prev_PHI = PHI(SEM_index);
-    
+                for  k = 1:Nel
+                    err_el(k) = sqrt(sum(((init_phi{k}(:) - obj.PProcessing.Potential{k}(:)).^2).*obj.Geometry.metrics.J{k}(:).*obj.Geometry.metrics.W{k}(:)))./sum(obj.Geometry.metrics.J{k}(:).*obj.Geometry.metrics.W{k}(:));
+                    obj.NonlinearSolver.MU{ii,k} = MU{k};
+                    obj.NonlinearSolver.K{ii,k}  = KK{k};
+                end
     %                 prev_PHI = PHI;
-    %     init_phi = obj.PProcessing.Potential;
+    err(ii)  = max(err_el);%norm(PHI(SEM_index)-prev_PHI(SEM_index),Inf);%/mean(abs(PHI(SEM_index)));
+    prev_PHI = PHI(SEM_index);
+        init_phi = obj.PProcessing.Potential;
     %----------------------------------------------------------
     % Display the iterations
     %----------------------------------------------------------
@@ -249,6 +253,7 @@ for ii = 1:iter
     
     
 end
+
 
 if max(abs(Y_mag)>0)
     PHI_rem = S(SEM_index,SEM_index)\Y_mag(SEM_index);

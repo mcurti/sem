@@ -58,7 +58,7 @@ for k = 1:Nr
     end
 end
 
-bh = bh_class(2);
+bh = bh_class(1);
 for k = 1:Nel
     % Computing the magnetic field strength
     %                 mod_H{k} = mod_B{k}./(Materials.Permeability{k}*mu0);
@@ -76,10 +76,12 @@ for k = 1:Nel
         if min(B(:)==0) && max(B(:))==0
             B = B+0.01e-3;
         end
-        [Brem, ~, Permeability{k}] = bh.BHtool(B*1e3);
+        [Brem, ~, Permeability{k}] = bh.BHtool(B);
+%     [NU, ~] = BHtoolNR (B*1e3,2);
+%         Permeability{k} = 1./NU;
 %         Permeabilitys{k} = bh.permeability(B*1e3);
 %         Permeability{k} = bh.permeability(B*1e3);
-        Brem = Brem*1e-3;
+% % % %         Brem = Brem;
         K{k} = Brem./(B.*Permeability{k});
     else
         %                     B_bh{k} = mod_B{k};

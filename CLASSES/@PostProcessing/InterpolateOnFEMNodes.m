@@ -18,7 +18,7 @@ obj.FEM.potential = cell(1,Nel);
 obj.FEM.Flux_abs  = cell(1,Nel);
 s                 = cell(2,4);
 options = optimoptions('fsolve','Display','off',...
-    'FunctionTolerance',1e-10);
+    'FunctionTolerance',1e-07);
 
 % Element list
 try
@@ -142,6 +142,7 @@ catch
             end
         end
     end
+    close(wb);
     SEM.int.interpolated = interpolation;
     SEM.interpolated = interpolation;
 end
