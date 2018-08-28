@@ -108,23 +108,36 @@ classdef Physics
             for k = 1:Nel
                 [M, N] = size(obj.G_class.mappings.Xm{k});
                 obj.Materials.Permeability{k} = ones(M,N);
+                obj.Materials.Conductivity{k} = zeros(M,N);
             end
             % Updating the assigned properties
             for k = 1:Nr
                 ElementList  = eval(['[' xml2matlab(obj.xmlContent,...
                     'region',k-1,'ElementList','Attribute') ']']);
                 try
+                    % Permeability
                     permeability = eval(xml2matlab(obj.xmlContent,...
                         'region',k-1,'MagneticMaterial','Attribute'));
+                    % Conductivity
+                    conductivity = eval(xml2matlab(obj.xmlContent,...
+                        'region',k-1,'Conductivity','Attribute'));
                 catch
-                    
+                    % Permeability (?)
                     permeability = eval(xml2matlab(obj.xmlContent,...
                         'region',k-1,'InitialPermeability','Attribute'));
+                    % Conductivity (?)
+                    conductivity = eval(xml2matlab(obj.xmlContent,...
+                        'region',k-1,'InitialConductivity','Attribute'));
                 end
                 for ii = 1:length(ElementList)
+                    % Permeability
                     obj.Materials.Permeability{ElementList(ii)} = ...
                     ones(size(obj.G_class.mappings.Xm{ElementList(ii)}))...
                     *permeability;
+                    % Conductivity
+                    obj.Materials.Conductivity{ElementList(ii)} = ...
+                    ones(size(obj.G_class.mappings.Xm{ElementList(ii)}))...
+                    *conductivity;
                 end
             end
         end

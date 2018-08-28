@@ -133,11 +133,12 @@ classdef SEM < matlab.mixin.SetGet
                 fprintf('Building the global matrix at iteration %d \n'...
                     ,ii);
                 obj.Problem = obj.Problem.global_matrix;
+                Conductivity_vector = obj.Problem.building_Y_vector_eddy;
                 
                 fprintf('Start solving the linear system at time %.4f \n'...
                     ,toc);
                 s_time = toc;
-                S = sparse(obj.Problem.Global_Matrix);
+                S = sparse(obj.Problem.Global_Matrix - diag(Conductivity_vector));
                 
                 PHI(matrix_index) = S(matrix_index,matrix_index)...
                     \(obj.Problem.Y.vector(matrix_index)' + ...

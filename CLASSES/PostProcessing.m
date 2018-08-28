@@ -152,13 +152,13 @@ classdef PostProcessing < matlab.mixin.SetGet
                 flux_lines = ...
                             linspace(min(varargin{1}),max(varargin{1}),20);
             else
-                flux_lines = linspace(min(obj.PHI(:)),max(obj.PHI(:)),20);
+                flux_lines = linspace(min(obj.PHI(:)),max(real(obj.PHI(:))),20);
             end
             
             % Plot contours
             for k = 1:Nel
                 contour(obj.mappings.Xm{k},obj.mappings.Ym{k},...
-                    obj.Potential{k},flux_lines);
+                    real(obj.Potential{k}),flux_lines);
             end
         end
         
