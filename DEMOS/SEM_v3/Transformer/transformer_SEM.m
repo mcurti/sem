@@ -1,6 +1,6 @@
 %% SEM Test Transformer Cartesian
 clear variables;
-close all;
+% close all;
 clc;
 
 %% SEM
@@ -21,28 +21,29 @@ phi_s = S.PProcessing.flux_linkage(15);
 
 % Current density in plate
 N_el = 42;
-f = 500;
-sigma = 8.41e6;
+f = 1;
+sigma = 8.41e3;
 J_e = cell(1,N_el);
-for i = 1:N_el
-    J_e{i} = imag(S.PProcessing.Potential{i}*1i*2*pi*f*sigma);
+for k = 1:N_el
+    J_e{k} = real(S.PProcessing.Potential{k}*1j*2*pi*f*sigma);
 end
 
 %% Plot results
 
 % Plot the vector potential
 figure(1)
+clf
 hold on;
 % Plot points of geometry
 S.Geometry.plot_geometry('markersize',12,'color','k','points');
 % Plot lines of geometry
 S.Geometry.plot_geometry('color','k','lines');
 % Plot the vector potential
-S.PProcessing.plot_contour();
-% S.PProcessing.plot_surf_var(J_e);
+% S.PProcessing.plot_contour(linspace(0,max(real(S.PProcessing.PHI))));
+S.PProcessing.plot_surf_var(J_e);
 hold off
 c = colorbar;
-caxis([min(real(S.PProcessing.PHI)) max(real(S.PProcessing.PHI))])
+% caxis([min(real(S.PProcessing.PHI))*0 max(real(S.PProcessing.PHI))])
 title(c,'A_z')
 xlabel('x [mm]')
 ylabel('y [mm]')

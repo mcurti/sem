@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Body>
   <Geometry>
-    <Parameters R_1="1.55" R_2="3.00" R_3="5.80" R_4="7.15" R_5="7.65" R_6="8.65" h_b="(18.5-2*(h_c+h_w)-l_ag)/2" h_c="1.40" h_w="2.80" l_ag="1.00" N_1="8" N_2="8" N_3="8" N_px="30" N_py="8"></Parameters>
+    <Parameters R_1="1.55" R_2="3.00" R_3="5.80" R_4="7.15" R_5="7.65" R_6="8.65" h_b="(18.5-2*(h_c+h_w)-l_ag)/2" h_c="1.40" h_w="2.80" l_ag="1.00" N_1="15" N_2="15" N_3="15" N_px="100" N_py="15"></Parameters>
     <Points p="56">
       <point id="1" address="0,0" />
       <point id="2" address="R_1,0" />
@@ -251,7 +251,7 @@
     </Elements>
   </Geometry>
   <Physics>
-    <PhysicalParameters mu0="1" sigma_1="0*jw" sigma_2="8.41e6*jw" J_p="sqrt(2)*5*pi*4e-7" J_s="0" mur_c="3000" mur_p="1000" jw="j*2*pi*500*4*pi*1e-7" />
+    <PhysicalParameters mu0="1" sigma_1="0*jw" sigma_2="8410*jw" J_p="sqrt(2)*5*pi*4e-7" J_s="0" mur_c="3000" mur_p="1000" jw="j*2*pi*1*4*pi*1e-7" />
     <Regions nR="4">
       <region id="1" name="C_p" CurrentDensity="J_p" MagneticMaterial="mu0" ElementList="27" Conductivity="sigma_1"></region>
       <region id="2" name="C_s" CurrentDensity="J_s" MagneticMaterial="mu0" ElementList="15" Conductivity="sigma_1" />
