@@ -72,7 +72,8 @@ init_phi = cell(1,Nel);
 % end
 %
 % SEM_index(SEM_index==0) = [];
-
+obj.Problem = obj.Problem.load_Y_sources;
+obj.Problem = obj.Problem.building_Y_vector;
 
 for k = 1:Nel
     init_phi{k} = zeros(size(obj.Problem.metrics.J{k}));
@@ -197,15 +198,15 @@ for ii = 1:iter
     
     
     
-                for  k = 1:Nel
-                    err_el(k) = sqrt(sum(((init_phi{k}(:) - obj.PProcessing.Potential{k}(:)).^2).*obj.Geometry.metrics.J{k}(:).*obj.Geometry.metrics.W{k}(:)))./sum(obj.Geometry.metrics.J{k}(:).*obj.Geometry.metrics.W{k}(:));
-                    obj.NonlinearSolver.MU{ii,k} = MU{k};
-                    obj.NonlinearSolver.K{ii,k}  = KK{k};
-                end
+%                 for  k = 1:Nel
+%                     err_el(k) = sqrt(sum(((init_phi{k}(:) - obj.PProcessing.Potential{k}(:)).^2).*obj.Geometry.metrics.J{k}(:).*obj.Geometry.metrics.W{k}(:)))./sum(obj.Geometry.metrics.J{k}(:).*obj.Geometry.metrics.W{k}(:));
+%                     obj.NonlinearSolver.MU{ii,k} = MU{k};
+%                     obj.NonlinearSolver.K{ii,k}  = KK{k};
+%                 end
     %                 prev_PHI = PHI;
-    err(ii)  = max(err_el);%norm(PHI(SEM_index)-prev_PHI(SEM_index),Inf);%/mean(abs(PHI(SEM_index)));
+    err(ii)  = norm(delta_PHI(SEM_index),Inf)/max(abs(PHI(SEM_index)));%/mean(abs(PHI(SEM_index)));
     prev_PHI = PHI(SEM_index);
-        init_phi = obj.PProcessing.Potential;
+%         init_phi = obj.PProcessing.Potential;
     %----------------------------------------------------------
     % Display the iterations
     %----------------------------------------------------------

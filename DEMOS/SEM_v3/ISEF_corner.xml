@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Body>
   <Geometry>
-    <Parameters wiron="10" hcoil="10" wout="12" rin="2" rout="5" Ntmp="8" hiron="18" wcoil="5" ironnodes="Ntmp" cornernodes="Ntmp" nodes1="Ntmp" ycoilsnodes="Ntmp" xcoilndes="Ntmp" nodes2="Ntmp" nodes3="Ntmp"></Parameters>
+    <Parameters mm="1e-3" wiron="10*mm" hcoil="3*mm" wout="12*mm" rin="2*mm" rout="5*mm" Ntmp="5" hiron="18*mm" wcoil="5*mm" ironnodes="Ntmp" cornernodes="Ntmp" nodes1="Ntmp" ycoilsnodes="Ntmp" xcoilndes="Ntmp" nodes2="Ntmp" nodes3="Ntmp"></Parameters>
     <Points p="23">
       <point id="1" address="0,hiron+wiron+wout" />
       <point id="2" address="wout + rout,hiron+wiron+wout" />

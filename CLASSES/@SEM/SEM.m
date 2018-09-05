@@ -61,7 +61,7 @@ classdef SEM < matlab.mixin.SetGet
             % Load the sources and build the Y vector
             disp('SEM - Load the sources and build the rhs vector')
             obj.Problem = obj.Problem.load_Y_sources;
-            obj.Problem = obj.Problem.building_Y_vector;
+%             obj.Problem = obj.Problem.building_Y_vector;
             
             %==============================================================
             % Fourier Regions
