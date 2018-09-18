@@ -31,7 +31,7 @@ bx = diag(Dy*a); by = diag(-Dx*a);
 bxbx = bx*bx; bxby = bx*by; bybx = by*bx; byby = by*by;
 
 if max(abs(kk))>0
-    bh = bh_class(1);
+    bh = bh_class(2);
     dNU = diag(bh.dnu(Bmod));
 %     [NU, dNU] = BHtoolNR (Bmod*1e3,2);
 %     NU = diag(NU); dNU = diag(dNU);

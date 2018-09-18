@@ -181,9 +181,14 @@ for ii = 1:iter
 %     dS = S; dS(SEM_index,SEM_index) = S(SEM_index,SEM_index) - sparse(MagMatrix);
 %     PHI = S\(Y' + Y_mag);% + S\Y_mag;
 %     if ii == 1; phi = [PHI; zeros(size(obj.Fourier_matrix.Efrequency,1),1)]; else, phi = PHI; end
-    delta_PHI = JacFin\(-S*PHI + Y');% + Y_mag*0);
+if sum(ne)==0
+    PHI = S\Y';
+    delta_PHI = zeros(size(Y'));
+else
+    delta_PHI = JacFin\(-S*PHI + Y');
     PHI = PHI + delta_PHI;
-%     save(filename,'PHI');
+end
+    save(filename,'PHI');
     fprintf('Linear system solved in  %.4f seconds \n',toc - s_time);
     %% pause
     
@@ -220,7 +225,7 @@ for ii = 1:iter
             obj.NonlinearSolver.tol*ones(1,iter),'-r')
         hold off
         xlim([1 iter])
-        ylim([obj.NonlinearSolver.tol*.5 err(1)*5])
+        ylim([obj.NonlinearSolver.tol*.5 5])
         xlabel('iterations')
         ylabel('norm')
         figure_config(100,15,5,8)

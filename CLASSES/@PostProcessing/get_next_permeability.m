@@ -58,7 +58,7 @@ for k = 1:Nr
     end
 end
 
-bh = bh_class(1);
+bh = bh_class(2);
 for k = 1:Nel
     % Computing the magnetic field strength
     %                 mod_H{k} = mod_B{k}./(Materials.Permeability{k}*mu0);

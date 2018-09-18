@@ -10,17 +10,24 @@ function [ Ppx ] = LagrangeInterpDerivative( x, xj, fj )
 wj = BarycentricWeights(xj);
 % evaluating the function fj on x nodes
 Ppx = zeros(size(x));
-Px  = LagrangeInterp(x, xj, fj);
 % selecting non equal points
 % xii = true(size(xj));
 
+xj = reshape(xj,length(xj),1);
+fj = reshape(fj,length(fj),1);
+
+wj = reshape(wj,size(xj));
+
+Px  = LagrangeInterp(x, xj, fj);
 
 for k = 1:length(x)
     if sum(x(k)==xj) == 0
-    Ppx(k) = sum(wj.*(Px(k)-fj)./(x(k) - xj).^2)./sum(wj./(x(k) - xj));
+        % Not at the nodes
+        Ppx(k) = sum(wj./(x(k) - xj).*(Px(k)-fj)./(x(k) - xj))./sum(wj./(x(k) - xj));
     else
-        xii = not(x(k)==xj);
-        Ppx(k) = -1./wj(k).*sum(wj(xii).*(fj(k)-fj(xii))./(x(k) - xj(xii)));
+        % At the nodes
+        xjj = not(x(k)==xj); xii = not(xjj);
+        Ppx(k) = -1./wj(xii).*sum(wj(xjj).*(Px(k)-fj(xjj))./(x(k) - xj(xjj)));
     end
 end
 
