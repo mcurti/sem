@@ -8,6 +8,7 @@ classdef bh_class
         Extrap_Spline_ppB
         Extrap_Spline_n2
         Extrap_Spline_pn2
+        Extrap_Spline_H
     end
     
     methods
@@ -45,7 +46,12 @@ classdef bh_class
                 % Preparing the splines
                 % H(B)
                 SB   = spline(btest,[1/(mu_init*mu0); htest; 1/(mu_end*mu0)]);
+                % B(H)
+                SH   = spline(htest,[(mu_init*mu0); btest; (mu_end*mu0)]);
+                
+                
                 SBex = fnxtr(SB,2);
+                SHex = fnxtr(SH,2);
                 
                 % H'(B)
                 fp   = fnder(SBex,1);
@@ -89,8 +95,12 @@ classdef bh_class
                 % Preparing the splines
                 % H(B)
                 SB   = spline(btest,[1/(mu_init*mu0); htest; 1/(mu_end*mu0)]);
-                SBex = fnxtr(SB,2);
+                % B(H)
+                SH   = spline(htest,[(mu_init*mu0); btest; (mu_end*mu0)]);
                 
+                
+                SBex = fnxtr(SB,2);
+                SHex = fnxtr(SH,2);
                 % H'(B)
                 fp   = fnder(SBex,1);
                 
@@ -109,6 +119,7 @@ classdef bh_class
             
             % Assigning the classes data
             obj.Extrap_Spline_B   = SBex;
+            obj.Extrap_Spline_H   = SHex;
             obj.Extrap_Spline_pB  = fp;
             obj.Extrap_Spline_ppB = fpp;
             obj.Extrap_Spline_n2  = SNB2;
@@ -141,6 +152,12 @@ classdef bh_class
             % Output
             mu0 = 4*pi*1e-7;
             dnu = df(x0).*mu0;
+        end
+        
+        % Function which return the B under the linear B
+        function B = B_under(obj,H)
+            f   = @(x) ppval(obj.Extrap_Spline_H,x);
+            B = f(H);
         end
     end
 end

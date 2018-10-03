@@ -35,7 +35,8 @@ SEM_index = 1:tot_unknowns;
 prev_PHI = Y_mag;
 % delta_PHI = prev_PHI(SEM_index);
 
-E = zeros(spc);
+E      = zeros(spc);
+JacFin = E;
 dataPostProcessing.xmlContent   = ...
     obj.Geometry.GeometryElement;
 dataPostProcessing.ProblemData  = obj.Physics.ProblemData;
@@ -48,7 +49,7 @@ dataPostProcessing.elements     = obj.Geometry.elements;
 dataPostProcessing.Permeability = ...
     obj.Problem.Materials;
 
-err_el = zeros(1,Nel);
+% err_el = zeros(1,Nel);
 init_phi = cell(1,Nel);
 % Count the periodic unknowns
 % per_points = eval(['[',xml2matlab(obj.Problem.xmlContent...
@@ -149,12 +150,17 @@ for ii = 1:iter
     
     if isempty(obj.Fourier)
         E = obj.Problem.Global_Matrix;
+        JacFin = JacMatrix;
         Y = obj.Problem.Y.vector;
     else
-        E(SEM_index,SEM_index) = obj.Problem.Global_Matrix;
+        E(SEM_index,SEM_index)      = obj.Problem.Global_Matrix;
+        JacFin(SEM_index,SEM_index) = JacMatrix;
         if ii == 1
             E(end-spr+1:end,end-spc+1:end) = space2freq;
             E(SEM_index(end)-frr+1:SEM_index(end),end-frc+1:end) = freq2space;
+            
+            JacFin(end-spr+1:end,end-spc+1:end) = space2freq;
+            JacFin(SEM_index(end)-frr+1:SEM_index(end),end-frc+1:end) = freq2space;
         end
         Y = cat(2,obj.Problem.Y.vector, zeros(1,size(space2freq,1)));
     end
@@ -171,8 +177,8 @@ for ii = 1:iter
     s_time = toc;
     
     S = sparse(E);
-    JacFin = E;
-    JacFin(SEM_index,SEM_index) = JacMatrix; JacFin = sparse(JacFin);
+%     JacFin = E;
+%     JacFin(SEM_index,SEM_index) = JacMatrix; JacFin = sparse(JacFin);
 % %     tmp(SEM_index,SEM_index) = JacMatrix - MagMatrix;
 %     
 %     if ii == 1; dS = S;  prevS = S; else
@@ -187,6 +193,9 @@ if sum(ne)==0
 else
     delta_PHI = JacFin\(-S*PHI + Y');
     PHI = PHI + delta_PHI;
+%     PHI = S\(Y' + Y_mag);% + S\Y_mag;
+%     delta_PHI = prev_PHI - PHI;
+%     prev_PHI = PHI;
 end
     save(filename,'PHI');
     fprintf('Linear system solved in  %.4f seconds \n',toc - s_time);
@@ -210,7 +219,7 @@ end
 %                 end
     %                 prev_PHI = PHI;
     err(ii)  = norm(delta_PHI(SEM_index),Inf)/max(abs(PHI(SEM_index)));%/mean(abs(PHI(SEM_index)));
-    prev_PHI = PHI(SEM_index);
+%     prev_PHI = PHI(SEM_index);
 %         init_phi = obj.PProcessing.Potential;
     %----------------------------------------------------------
     % Display the iterations

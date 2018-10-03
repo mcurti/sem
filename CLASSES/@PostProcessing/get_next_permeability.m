@@ -8,7 +8,7 @@ mod_B = obj.Flux.abs;
 % B_x   = obj.Flux.x_comp;
 % B_y   = obj.Flux.y_comp;
 Nel   = obj.ProblemData.Nel;
-%             mu0   = pi*4e-7;
+            mu0   = pi*4e-7;
 Nr    = eval(xml2matlab(xmlContent,'Regions'...
     ,0,'nR','Attribute'));
 parameters = obj.ProblemData.physical_parameters;
@@ -76,7 +76,9 @@ for k = 1:Nel
         if min(B(:)==0) && max(B(:))==0
             B = B+0.01e-3;
         end
-        [Brem, ~, Permeability{k}] = bh.BHtool(B);
+%         Hu = B./(obj.Permeability.Permeability{k}*mu0);
+%         Bp = bh.B_under(Hu);
+        [Brem,  ~,Permeability{k}] = bh.BHtool(B);
 %     [NU, ~] = BHtoolNR (B*1e3,2);
 %         Permeability{k} = 1./NU;
 %         Permeabilitys{k} = bh.permeability(B*1e3);

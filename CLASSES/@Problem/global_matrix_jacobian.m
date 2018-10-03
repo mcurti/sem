@@ -16,7 +16,7 @@ per_points = eval(['[',xml2matlab(obj.xmlContent...
     ,'BoundaryConditions',0,'periodic_points','Attribute'),'];']);
 per_lines  = eval(['[',xml2matlab(obj.xmlContent...
     ,'BoundaryConditions',0,'periodic_lines','Attribute'),'];']);
-
+dataElement.bh = bh_class(2);
 
 for k = 1:Nel
     % data for the element matrix

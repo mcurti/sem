@@ -1,4 +1,4 @@
-function [ Ic0, Ia, Ib ] = lagrange2fourier_int( x,Q )
+function [ Ic0, Ia, Ib ] = lagrange2fourier_int1( x, Q )
 %LAG2FOURIER_INT returns the matrices which, multiplied by the functions on
 %lag2fourier Transfomation into sine and cosine coefficients from
 %polynomial nodes.
@@ -6,7 +6,7 @@ function [ Ic0, Ia, Ib ] = lagrange2fourier_int( x,Q )
 %   w_j  - quadratures or any operator weights
 %   H    - number of harmonics
 
-for ii = 1:50
+for ii = 1
     Qk = ii*6;
     if not(iscell(x))
         
@@ -55,13 +55,15 @@ for ii = 1:50
         w_i       = (1:Q)'*pi/tau;% Calculated frequencies based on Q
         
         
+        N = lagrange2fourier_N_check_Norm( x, Q, 1e-1 );
+        
         % Evaluate the basis functions per interval
         
         Ic0c = cell(1,Nel); Iac = cell(1,Nel); Ibc = cell(1,Nel);
         
         for k = 1:Nel
             Nnodes(k) = numel(x{k});
-            M         = Nnodes(k)*ii;          % Size of the integration vector
+            M         = N(k);          % Size of the integration vector
             % Calculating the nodes and weights for the integration
             [x_int, w_int] = LegendreGausLobattoNodesAndWeights(M);
             
@@ -129,3 +131,4 @@ for ii = 1:50
 end
 
 end
+

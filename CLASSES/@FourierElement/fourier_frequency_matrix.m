@@ -106,7 +106,7 @@ for q = 1:2
     end
     NnodesSum(q) = sum(Nnodes{q});  % Total number of nodes;
     % SEM to fourier transformation
-    [Ic0, Ia, Ib]   = lagrange2fourier_int(xi_fourier,w_fourier, Q);
+    [Ic0, Ia, Ib]   = lagrange2fourier_int(xi_fourier, Q);
     
     Ic0([1 end])  = Ic0(1)+Ic0(end);
     Ia(:,[1 end]) = repmat(Ia(:,1)+Ia(:,end),1,2);
