@@ -148,10 +148,9 @@ classdef bh_class
 %             f   = @(x) ppval(obj.Extrap_Spline_B,x);
             
             x0  = Bmod.^2;
-            df  = @(x) ppval(obj.Extrap_Spline_pn2,x);
             % Output
             mu0 = 4*pi*1e-7;
-            dnu = df(x0).*mu0;
+            dnu = ppval(obj.Extrap_Spline_pn2,x0).*mu0;
         end
         
         % Function which return the B under the linear B

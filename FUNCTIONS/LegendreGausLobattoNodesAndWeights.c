@@ -27,8 +27,8 @@ void LegendreGausLobattoNodesAndWeights(int N, double *xi, double *w)
     double delta;
     
     if (N==1){
-        xi[0] =  1;
-        xi[1] = -1;
+        xi[0] = -1;
+        xi[1] =  1;
         w[0]  =  1;
         w[1]  = w[0];
     }

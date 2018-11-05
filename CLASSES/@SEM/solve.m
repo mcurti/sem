@@ -176,7 +176,7 @@ for ii = 1:iter
     
     s_time = toc;
     
-    S = sparse(E);
+    S = sparse(E); JacFin = sparse(JacFin);
 %     JacFin = E;
 %     JacFin(SEM_index,SEM_index) = JacMatrix; JacFin = sparse(JacFin);
 % %     tmp(SEM_index,SEM_index) = JacMatrix - MagMatrix;

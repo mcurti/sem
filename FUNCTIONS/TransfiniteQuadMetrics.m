@@ -1,4 +1,4 @@
-function [ Xcsi, Ycsi, Xeta, Yeta, J ] = TransfiniteQuadMetrics1( csi, eta, s )
+function [ Xcsi, Ycsi, Xeta, Yeta, J ] = TransfiniteQuadMetrics( csi, eta, s )
 %TransfiniteQuadMap Returns the mapped meshgrid according to the boundary
 %curves
 %   csi      - x points
