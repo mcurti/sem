@@ -152,6 +152,10 @@ classdef Problem < matlab.mixin.SetGet
         %------------------------------------------------------------------
         % Build the global matrix without the permeability
         %------------------------------------------------------------------
+        [G, J] = global_matrix_and_jacobian(obj,kk,Potential)
+        %------------------------------------------------------------------
+        % Build the global matrix without the permeability
+        %------------------------------------------------------------------
         obj = global_matrix_contour(obj,nu)
         %------------------------------------------------------------------
         % Update the sources
