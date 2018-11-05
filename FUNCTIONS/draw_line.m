@@ -61,13 +61,18 @@ switch mode
 %             alpha_2 = 2*pi - abs(alpha_2);
 % %             disp('1')
 %         end
-        if alpha_1 < 0
-            alpha_1 = 2*pi + alpha_1;
+%         if alpha_1 < 0
+%             alpha_1 = 2*pi + alpha_1;
+%         end
+%         
+%         if alpha_2 < 0
+%             alpha_2 = 2*pi + alpha_2;
+%         end
+
+        if alpha_1 <= -pi/2 && alpha_2 >= pi/2
+            alpha_2 = alpha_2 - (2*pi);
         end
-        
-        if alpha_2 < 0
-            alpha_2 = 2*pi + alpha_2;
-        end
+
         %------------------------------------------------------------------
         a2     = n2range(arg,alpha_1,alpha_2);
         sx     = Po(x) + R*cos(a2)';

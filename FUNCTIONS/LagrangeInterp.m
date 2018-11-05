@@ -3,8 +3,12 @@ function [ Px ] = LagrangeInterp( x, xj, fj )
 %   x  = list of points where the interpolation is evaluated
 %   xj = list of points where the fj is given
 
+xj = reshape(xj,length(xj),1);
+fj = reshape(fj,length(fj),1);
 % computing the barycentric weights
 wj = BarycentricWeights(xj);
+
+wj = reshape(wj,size(xj));
 
 % evaluating the function fj on x nodes
 Px = zeros(size(x));

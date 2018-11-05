@@ -14,6 +14,7 @@ classdef SEM < matlab.mixin.SetGet
         Physics;  % The instance of the Physics class
         Problem;  % The instance of the Problem class
         PProcessing; % The instance of the post processing class
+        Fourier;     % The Fourier class
         NonlinearSolver; % The settings for the nonlinear solver
         SEM_interpolation;
     end
@@ -60,6 +61,65 @@ classdef SEM < matlab.mixin.SetGet
             disp('SEM - Load the sources and build the rhs vector')
             obj.Problem = obj.Problem.load_Y_sources;
             obj.Problem = obj.Problem.building_Y_vector;
+            
+            %==============================================================
+            % Fourier Regions
+            %==============================================================
+            try
+                % Geting general parameters for Fourier
+                Q     = eval(xml2matlab(obj.Problem.xmlContent...
+                    ,'Fourier',0,'Harmonics','Attribute'));
+                type  = xml2matlab(obj.Problem.xmlContent...
+                    ,'Fourier',0,'type','Attribute');
+                start = eval(xml2matlab(obj.Problem.xmlContent...
+                    ,'Fourier',0,'start','Attribute'));
+                tau   = eval(xml2matlab(obj.Problem.xmlContent...
+                    ,'Fourier',0,'tau','Attribute'));
+                fel   = eval(xml2matlab(obj.Problem.xmlContent...
+                    ,'Fourier',0,'fel','Attribute'));
+                
+                % Geting parameters per domain
+                parameter_loader(obj.Geometry.parameters)
+                domain.heights    = zeros(fel,2);
+                domain.points_top = cell(fel);
+                domain.lines_top  = cell(fel);
+                
+                for k = 1:fel
+                    domain.heights(k,:) = ...
+                        eval(['[' xml2matlab(obj.Problem.xmlContent...
+                        ,'domain',k-1,'heights','Attribute') '];']);
+                    domain.lines_top{k} = ...
+                        eval(['[' xml2matlab(obj.Problem.xmlContent...
+                        ,'domain',k-1,'lines_top','Attribute') '];']);
+                    domain.elements_top{k} = ...
+                        eval(['[' xml2matlab(obj.Problem.xmlContent...
+                        ,'domain',k-1,'elements_top','Attribute') '];']);
+                end
+                
+                % Formating the data for Fourier class
+                Elements           = struct;
+                Elements.x_start   = start;
+                Elements.tau       = tau;
+                Elements.Harmonics = Q;
+                Elements.heights   = domain.heights;
+                Elements.type      = type;
+                obj.Fourier        = fourierElements(Elements);
+                Geom_data.lines    = obj.Geometry.lines;
+                Geom_data.xi       = obj.Geometry.xi;
+                Geom_data.metrics  = obj.Geometry.metrics;
+                %
+                FourierData.connectedLines = domain.lines_top{1};
+                FourierData.connectedElements = domain.elements_top{1};
+                % Building the Fourier to space tranformation matrix
+                [Espace, in_line] = obj.Fourier.fourier_space_matrix...
+                           (obj.Problem.ProblemData,Geom_data,FourierData);
+                
+                Efrequency = obj.Fourier.fourier_frequency_matrix...
+                           (obj.Problem.ProblemData,Geom_data,FourierData);
+            catch
+                obj.Fourier = false;
+                disp('No Fourier domains detected')
+            end
         end
         
         %------------------------------------------------------------------
@@ -109,7 +169,6 @@ classdef SEM < matlab.mixin.SetGet
             c_node = obj.Physics.ProblemData.pointVectorLocation;
             
             for k = per_points
-                
                 matrix_index(c_node(k),:)  = false;
             end
 
@@ -279,32 +338,4 @@ classdef SEM < matlab.mixin.SetGet
         end
     end
     
-end
-
-function out = xml2matlab(varargin)
-mode          = varargin{nargin};
-xmlElement    = varargin{1};
-ElementName   = varargin{2};
-ElementNumber = varargin{3};
-switch mode
-    % Extracts all the attributes for certain element and returns the name
-    % and its value in a 2 column cell
-    case 'Attributes'
-        Attributes = xmlElement.getElementsByTagName(ElementName). ...
-            item(ElementNumber).getAttributes;
-        AttributeNumber = Attributes.getLength;
-        Parameters = cell(AttributeNumber,2);
-        for k = 1:AttributeNumber
-            Parameters{k,1} = char(Attributes.item(k-1).getName);
-            Parameters{k,2} = char(Attributes.item(k-1).getValue);
-        end
-        out = Parameters;
-        % Extracts only selected attribute and returns its value
-    case 'Attribute'
-        AttributeName = varargin{4};
-        Attribute = char(xmlElement.getElementsByTagName(ElementName). ...
-            item(ElementNumber).getAttribute(AttributeName));
-        out = Attribute;
-        
-end
 end

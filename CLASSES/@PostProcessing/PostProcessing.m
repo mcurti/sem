@@ -170,7 +170,7 @@ classdef PostProcessing < matlab.mixin.SetGet
                        
                     for k = 1:Nel
                         surf(obj.mappings.Xm{k},obj.mappings.Ym{k},...
-                            var{k},'edgecolor','none');
+                            var{1,k},'edgecolor','none');
                     end
         end
         
@@ -191,8 +191,9 @@ classdef PostProcessing < matlab.mixin.SetGet
             
             % Plot contours
             for k = 1:Nel
-                contour(obj.mappings.Xm{k},obj.mappings.Ym{k},...
+            contour(obj.mappings.Xm{k},obj.mappings.Ym{k},...
                     obj.Potential{k},flux_lines);
+               
             end
         end
         
@@ -221,129 +222,11 @@ classdef PostProcessing < matlab.mixin.SetGet
                end
         end
         %==================================================================
-        
         %------------------------------------------------------------------
         % Interpolate to all FEM nodes
         %------------------------------------------------------------------
-        
-        function  SEM = InterpolateOnFEMNodes(obj,allFEM)
-            
-            % Initialising the data
-            SEM.potential = zeros(size(allFEM.all_x_nodes));
-            SEM.abs_Flux  = zeros(size(allFEM.all_x_nodes));
-            Nel = obj.ProblemData.Nel;
-            el_list           = 1:Nel;
-            obj.FEM.x_mesh    = cell(1,Nel);
-            obj.FEM.y_mesh    = cell(1,Nel);
-            obj.FEM.TRI       = cell(1,Nel);
-            obj.FEM.potential = cell(1,Nel);
-            obj.FEM.Flux_abs  = cell(1,Nel);
-            s                 = cell(2,4);
-            options = optimoptions('fsolve','Display','off',...
-                'FunctionTolerance',1e-8);
-            
-            % Element list
-            try
-                el_list(allFEM.noelements) = [];
-            catch
-                disp('interpolating with all elements')
-            end
-            
-            % the loop for all FEM nodes
-            for ii = 1:length(allFEM.all_x_nodes)
-                
-                x_fem = allFEM.all_x_nodes(ii);
-                y_fem = allFEM.all_y_nodes(ii);
-                interpolated = false;
-                
-                
-                % Check if init values are present
-                if exist('csi_init','var')
-                else
-                    csi_init = 1-2*rand(1); eta_init = 1-2*rand(1);
-                end
-                % the loop for each element
-                try
-                    tmp = allFEM.int;
-                    el  = tmp.element(ii);
-                    csi_i = tmp.csi(ii);
-                    eta_i = tmp.eta(ii);
-                    connectivity = abs(obj.elements.lines(el,:));
-                    csi = obj.xi.csi_for_all_lines{connectivity(1)};
-                    eta = obj.xi.csi_for_all_lines{connectivity(2)};
-                    [X, Y] = meshgrid(csi, eta);
-                    lxy        = PolynomialInterp12D(csi_i,eta_i,X,Y);
-                    SEM.potential(ii)   = lxy*obj.Potential{el}(:);
-                    SEM.abs_Flux(ii)    = lxy*obj.Flux.abs{el}(:)*1e3;
-                catch
-                for jj = el_list
-                    clc
-                    fprintf('interpolation on node %d from %d in the element %d\n',ii,...
-                                               length(allFEM.all_x_nodes),jj);
-                    connectivity = abs(obj.elements.lines(jj,:));
-                    
-                    for k = 1:4
-                        s{1,k} = obj.lines.vector{connectivity(k)}(1,:);
-                        s{2,k} = obj.lines.vector{connectivity(k)}(2,:);
-                    end
 
-                    % Check if the point is close to the element
-
-                    max_dx = max(max(obj.mappings.Xm{jj}(:)) - ...
-                                 min(obj.mappings.Xm{jj}(:)));
-                 
-                    max_dy = max(max(obj.mappings.Ym{jj}(:)) - ...
-                                 min(obj.mappings.Ym{jj}(:)));
-                          
-                    min_dx_FEM = min(abs(x_fem - obj.mappings.Xm{jj}(:)));
-                    min_dy_FEM = min(abs(y_fem - obj.mappings.Ym{jj}(:)));
-                    
-                 
-                    if max_dx > min_dx_FEM && max_dy > min_dy_FEM 
-                  
-                       % Axes in the computational domain
-                       csi = obj.xi.csi_for_all_lines{connectivity(1)};
-                       eta = obj.xi.csi_for_all_lines{connectivity(2)};
-                 
-                       myfun = @(x)  [x_fem; y_fem] - ...
-                       InterpolationPoints(csi,eta,x(1:numel(x_fem)),...
-                       x(numel(x_fem)+1:end), s);
-                   
-                       if ii==1
-                           [out,~,exitflag,~] = ...
-                               fsolve(myfun,1-2*rand(1,2),options);
-                       else
-                           [out,~,exitflag,~] = ...
-                               fsolve(myfun,[csi_init, eta_init],options);
-                       end
-                           
-                       
-                 
-                       csi_i = out(1); eta_i = out(2);
-                     
-                       if abs(round(csi_i,6)) <= 1 && ...
-                                  abs(round(eta_i,6)) <= 1 && exitflag > 0
-                          [X, Y] = meshgrid(csi, eta);
-                          lxy        = PolynomialInterp2D(csi_i,eta_i,X,Y);
-           
-                          SEM.potential(ii)   = lxy*obj.Potential{jj}(:);
-                          SEM.abs_Flux(ii)    = lxy*obj.Flux.abs{jj}(:);
-                          SEM.int.element(ii) = jj;
-                          SEM.int.csi(ii)     = csi_i;
-                          SEM.int.eta(ii)     = eta_i;
-                          interpolated = true;
-                          csi_init = out(1); eta_init = out(2);
-                       end
-                    end
-                    
-                    % Break the element loop if interpolated
-                    if interpolated
-                        break
-                    end
-                end
-                end
-            end
-        end
+        SEM = InterpolateOnFEMNodes(obj,allFEM)
         %------------------------------------------------------------------
         % Function which combines all the points from the elements in one
         % set of vectors
@@ -387,104 +270,12 @@ classdef PostProcessing < matlab.mixin.SetGet
         %------------------------------------------------------------------
         % Function that returns the updated permeability according to the
         % given BH rule and the source as a result of remanence
-        function [Permeability, K, nonlin_elem ]= ...
+        [Permeability, K, nonlin_elem ]= ...
                             get_next_permeability(obj,Materials,xmlContent)
-            % Initial parameters
-            
-%             options = optimoptions('fsolve','Display','off',...
-%                 'FunctionTolerance',1e-8);
-            mod_B = obj.Flux.abs;
-            Nel   = obj.ProblemData.Nel;
-%             mu0   = pi*4e-7;
-            Nr    = eval(xml2matlab(xmlContent,'Regions'...
-                                                     ,0,'nR','Attribute'));
-            parameters = obj.ProblemData.physical_parameters;
-            Nparam = length(parameters);
-            Permeability = cell(1,Nel);
-            K     = cell(1,Nel);
-            % Loading in the local workspace
-            
-            check_list = false(1,Nparam);
-            
-            for k = 1:Nparam
-                try
-                    eval([parameters{k,1}, '=',parameters{k,2}, ';']);
-                catch
-                    check_list(k) = true;
-                end
-            end
-            check_list = find(check_list==true);
-            % running the parameters with errors
-            
-            for k = check_list
-                    eval([parameters{k,1}, '=', parameters{k,2}, ';']);
-            end
-            
-            % !!! Temporary analytical BH curve
-%             bh = @(H) mu0*H+2*Js/pi.*atan((pi*(mur-1)*mu0*H)./(2*Js));
-%             bhp = @(H) mu0 + (mur-1)*mu0./((pi*(mur-1)*mu0)^2/(2*Js)^2*H.^2+1);
-            % Obtaining the magnetic field strength
-%             mod_H    = cell(1,Nel);
-%             B_bh = cell(1,Nel);
-            
-            % Getting the features of each element
-            nonlin_elem = false(1,Nel);
-            
-            for k = 1:Nr
-                % Extracting the initial condition
-                init_prm  = eval(['[' xml2matlab(obj.xmlContent,...
-                    'region',k-1,'InitialPermeability','Attribute') ']']);
-                if isempty(init_prm)
-                else
-                    ElementList  = eval(['[' xml2matlab(obj.xmlContent,...
-                    'region',k-1,'ElementList','Attribute') ']']);
-                    nonlin_elem(ElementList) = true;
-%                     char_fcn = xml2matlab(obj.xmlContent,...
-%                                    'region',k-1,'MagneticMaterial','Attribute');
-                end
-            end
-            for k = 1:Nel
-                % Computing the magnetic field strength
-%                 mod_H{k} = mod_B{k}./(Materials.Permeability{k}*mu0);
-                
-                % Computing the remanence of B according to the BH curve
-                if nonlin_elem(k)
-%                     H = mod_H{k};
-%                     h = fsolve(@(x) bh(x) - mod_B{k}(:),mod_H{k}(:),options);
-%                     H = reshape(h,size(H));
-%                     B_bh{k} = bh(H);
-%                     Brem = B_bh{k}-bhp(H).*H;
-%                     Permeability{k} = bhp(H); %
-%                     B_bh{k} = mod_B{k};
-                    [Brem, Permeability{k}] = BHtool(mod_B{k}*1e3,1);
-                    Brem = Brem*1e-3;
-                    K{k} = Brem./(mod_B{k}.*Permeability{k});
-                else
-%                     B_bh{k} = mod_B{k};
-                    Permeability{k} = Materials.Permeability{k};
-                    K{k} = zeros(size(mod_B{k}));
-                end
-            end
-
-        end
-        
         %------------------------------------------------------------------
         % Funciton to solve the flux linkage
         %------------------------------------------------------------------
-        function [FL, remFL] = flux_linkage(obj,elements)
-            
-            FL = 0; remFL = 0; 
-            for k = elements
-                
-                S = sum(obj.metrics.W{k}(:).*obj.metrics.J{k}(:));
-                               
-                FL = FL + sum(obj.Potential{k}(:).*...
-                   obj.metrics.W{k}(:).*obj.metrics.J{k}(:))/S;
-                remFL = remFL + sum(obj.remPotential{k}(:).*...
-                   obj.metrics.W{k}(:).*obj.metrics.J{k}(:))/S;
-            end
-            
-        end
+         [FL, remFL] = flux_linkage(obj,elements)
         
         %------------------------------------------------------------------
         % Function to solve the force on the elements
@@ -578,42 +369,20 @@ classdef PostProcessing < matlab.mixin.SetGet
     
 end
 
-function out = xml2matlab(varargin)
-         mode          = varargin{nargin};
-         xmlElement    = varargin{1};
-         ElementName   = varargin{2};
-         ElementNumber = varargin{3};
-switch mode
-    % Extracts all the attributes for certain element and returns the name
-    % and its value in a 2 column cell
-    case 'Attributes'
-        Attributes = xmlElement.getElementsByTagName(ElementName). ...
-            item(ElementNumber).getAttributes;
-        AttributeNumber = Attributes.getLength;
-        Parameters = cell(AttributeNumber,2);
-        for k = 1:AttributeNumber
-            Parameters{k,1} = char(Attributes.item(k-1).getName);
-            Parameters{k,2} = char(Attributes.item(k-1).getValue);
-        end
-        out = Parameters;
-    % Extracts only selected attribute and returns its value
-    case 'Attribute'
-        AttributeName = varargin{4};
-        Attribute = char(xmlElement.getElementsByTagName(ElementName). ...
-            item(ElementNumber).getAttribute(AttributeName));
-        out = Attribute;
-        
-end
-end
+
 
 function [fx, fy] = sem_gradient(f, Lx, Ly, Xxi, Xeta, Yxi, Yeta, J, ...
                                                                ElementSize)
-   fxi  = reshape(Lx*f(:),ElementSize(1),ElementSize(2));
-                   
-   feta = reshape(Ly*f(:),ElementSize(1),ElementSize(2));
-                   
-                   
-   fx = (Yeta.*fxi - Yxi.*feta)./J;
+%    fxi  = reshape(Lx*f(:),ElementSize(1),ElementSize(2));
+%                    
+%    feta = reshape(Ly*f(:),ElementSize(1),ElementSize(2));
+%                    
+%                    
+%    fx = (Yeta.*fxi - Yxi.*feta)./J;
+%    
+%    fy = (-Xeta.*fxi + Xxi.*feta)./J;
+% The same thing in the matrix form
+   fx = reshape(diag(1./J(:))*(diag(Yeta(:))*Lx - diag(Yxi(:))*Ly)*f(:),ElementSize(1),ElementSize(2));
    
-   fy = (-Xeta.*fxi + Xxi.*feta)./J;
+   fy = reshape(diag(1./J(:))*(-diag(Xeta(:))*Lx + diag(Xxi(:))*Ly)*f(:),ElementSize(1),ElementSize(2));
 end
