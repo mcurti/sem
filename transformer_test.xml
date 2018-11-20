@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Body>
+  
+   <Geometry>
+    
+      <Parameters N_1="4" N_2="4" N_3="4" N_px="4" N_py="4" R_1="1.55e-3" R_2="3.00e-3" R_3="5.80e-3" R_4="7.15e-3" R_5="7.65e-3" R_6="R_5+3*delta_s" delta_s="sqrt(1/(pi*1e6*4e-7*pi*100*8.41e6))" h_b="(18.5e-3-2*(h_c+h_w)-l_ag)/2" h_c="1.40e-3" h_w="2.80e-3" l_ag="1.00e-3"/>
+    
+      <Points p="56">
+      
+         <point address="0,0" id="1"/>
+      
+         <point address="R_1,0" id="2"/>
+      
+         <point address="R_2,0" id="3"/>
+      
+         <point address="R_3,0" id="4"/>
+      
+         <point address="R_4,0" id="5"/>
+      
+         <point address="R_5,0" id="6"/>
+      
+         <point address="R_6,0" id="7"/>
+      
+         <point address="0,h_b" id="8"/>
+      
+         <point address="R_1,h_b" id="9"/>
+      
+         <point address="R_2,h_b" id="10"/>
+      
+         <point address="R_3,h_b" id="11"/>
+      
+         <point address="R_4,h_b" id="12"/>
+      
+         <point address="R_5,h_b" id="13"/>
+      
+         <point address="R_6,h_b" id="14"/>
+      
+         <point address="0,h_b+h_c" id="15"/>
+      
+         <point address="R_1,h_b+h_c" id="16"/>
+      
+         <point address="R_2,h_b+h_c" id="17"/>
+      
+         <point address="R_3,h_b+h_c" id="18"/>
+      
+         <point address="R_4,h_b+h_c" id="19"/>
+      
+         <point address="R_5,h_b+h_c" id="20"/>
+      
+         <point address="R_6,h_b+h_c" id="21"/>
+      
+         <point address="0,h_b+h_c+h_w" id="22"/>
+      
+         <point address="R_1,h_b+h_c+h_w" id="23"/>
+      
+         <point address="R_2,h_b+h_c+h_w" id="24"/>
+      
+         <point address="R_3,h_b+h_c+h_w" id="25"/>
+      
+         <point address="R_4,h_b+h_c+h_w" id="26"/>
+      
+         <point address="R_5,h_b+h_c+h_w" id="27"/>
+      
+         <point address="R_6,h_b+h_c+h_w" id="28"/>
+      
+         <point address="0,h_b+h_c+h_w+l_ag" id="29"/>
+      
+         <point address="R_1,h_b+h_c+h_w+l_ag" id="30"/>
+      
+         <point address="R_2,h_b+h_c+h_w+l_ag" id="31"/>
+      
+         <point address="R_3,h_b+h_c+h_w+l_ag" id="32"/>
+      
+         <point address="R_4,h_b+h_c+h_w+l_ag" id="33"/>
+      
+         <point address="R_5,h_b+h_c+h_w+l_ag" id="34"/>
+      
+         <point address="R_6,h_b+h_c+h_w+l_ag" id="35"/>
+      
+         <point address="0,h_b+h_c+2*h_w+l_ag" id="36"/>
+      
+         <point address="R_1,h_b+h_c+2*h_w+l_ag" id="37"/>
+      
+         <point address="R_2,h_b+h_c+2*h_w+l_ag" id="38"/>
+      
+         <point address="R_3,h_b+h_c+2*h_w+l_ag" id="39"/>
+      
+         <point address="R_4,h_b+h_c+2*h_w+l_ag" id="40"/>
+      
+         <point address="R_5,h_b+h_c+2*h_w+l_ag" id="41"/>
+      
+         <point address="R_6,h_b+h_c+2*h_w+l_ag" id="42"/>
+      
+         <point address="0,h_b+2*h_c+2*h_w+l_ag" id="43"/>
+      
+         <point address="R_1,h_b+2*h_c+2*h_w+l_ag" id="44"/>
+      
+         <point address="R_2,h_b+2*h_c+2*h_w+l_ag" id="45"/>
+      
+         <point address="R_3,h_b+2*h_c+2*h_w+l_ag" id="46"/>
+      
+         <point address="R_4,h_b+2*h_c+2*h_w+l_ag" id="47"/>
+      
+         <point address="R_5,h_b+2*h_c+2*h_w+l_ag" id="48"/>
+      
+         <point address="R_6,h_b+2*h_c+2*h_w+l_ag" id="49"/>
+      
+         <point address="0,2*h_b+2*h_c+2*h_w+l_ag" id="50"/>
+      
+         <point address="R_1,2*h_b+2*h_c+2*h_w+l_ag" id="51"/>
+      
+         <point address="R_2,2*h_b+2*h_c+2*h_w+l_ag" id="52"/>
+      
+         <point address="R_3,2*h_b+2*h_c+2*h_w+l_ag" id="53"/>
+      
+         <point address="R_4,2*h_b+2*h_c+2*h_w+l_ag" id="54"/>
+      
+         <point address="R_5,2*h_b+2*h_c+2*h_w+l_ag" id="55"/>
+      
+         <point address="R_6,2*h_b+2*h_c+2*h_w+l_ag" id="56"/>
+    
+      </Points>
+    
+      <Lines l="97">
+      
+         <line connectivity="1,2" degree="N_1" id="1" type="segment"/>
+      
+         <line connectivity="2,3" degree="N_1" id="2" type="segment"/>
+      
+         <line connectivity="3,4" degree="N_1" id="3" type="segment"/>
+      
+         <line connectivity="4,5" degree="N_1" id="4" type="segment"/>
+      
+         <line connectivity="5,6" degree="N_1" id="5" type="segment"/>
+      
+         <line connectivity="6,7" degree="N_px" id="6" type="segment"/>
+      
+         <line connectivity="1,8" degree="N_1" id="7" type="segment"/>
+      
+         <line connectivity="2,9" degree="N_1" id="8" type="segment"/>
+      
+         <line connectivity="3,10" degree="N_1" id="9" type="segment"/>
+      
+         <line connectivity="4,11" degree="N_1" id="10" type="segment"/>
+      
+         <line connectivity="5,12" degree="N_1" id="11" type="segment"/>
+      
+         <line connectivity="6,13" degree="N_py" id="12" type="segment"/>
+      
+         <line connectivity="7,14" degree="N_py" id="13" type="segment"/>
+      
+         <line connectivity="8,9" degree="N_1" id="14" type="segment"/>
+      
+         <line connectivity="9,10" degree="N_2" id="15" type="segment"/>
+      
+         <line connectivity="10,11" degree="N_2" id="16" type="segment"/>
+      
+         <line connectivity="11,12" degree="N_2" id="17" type="segment"/>
+      
+         <line connectivity="12,13" degree="N_1" id="18" type="segment"/>
+      
+         <line connectivity="13,14" degree="N_px" id="19" type="segment"/>
+      
+         <line connectivity="8,15" degree="N_1" id="20" type="segment"/>
+      
+         <line connectivity="9,16" degree="N_2" id="21" type="segment"/>
+      
+         <line connectivity="10,17" degree="N_2" id="22" type="segment"/>
+      
+         <line connectivity="11,18" degree="N_2" id="23" type="segment"/>
+      
+         <line connectivity="12,19" degree="N_2" id="24" type="segment"/>
+      
+         <line connectivity="13,20" degree="N_py" id="25" type="segment"/>
+      
+         <line connectivity="14,21" degree="N_py" id="26" type="segment"/>
+      
+         <line connectivity="15,16" degree="N_1" id="27" type="segment"/>
+      
+         <line connectivity="16,17" degree="N_2" id="28" type="segment"/>
+      
+         <line connectivity="17,18" degree="N_2" id="29" type="segment"/>
+      
+         <line connectivity="18,19" degree="N_2" id="30" type="segment"/>
+      
+         <line connectivity="19,20" degree="N_1" id="31" type="segment"/>
+      
+         <line connectivity="20,21" degree="N_px" id="32" type="segment"/>
+      
+         <line connectivity="15,22" degree="N_1" id="33" type="segment"/>
+      
+         <line connectivity="16,23" degree="N_2" id="34" type="segment"/>
+      
+         <line connectivity="17,24" degree="N_2" id="35" type="segment"/>
+      
+         <line connectivity="18,25" degree="N_2" id="36" type="segment"/>
+      
+         <line connectivity="19,26" degree="N_2" id="37" type="segment"/>
+      
+         <line connectivity="20,27" degree="N_py" id="38" type="segment"/>
+      
+         <line connectivity="21,28" degree="N_py" id="39" type="segment"/>
+      
+         <line connectivity="22,23" degree="N_1" id="40" type="segment"/>
+      
+         <line connectivity="23,24" degree="N_2" id="41" type="segment"/>
+      
+         <line connectivity="24,25" degree="N_2" id="42" type="segment"/>
+      
+         <line connectivity="25,26" degree="N_2" id="43" type="segment"/>
+      
+         <line connectivity="26,27" degree="N_1" id="44" type="segment"/>
+      
+         <line connectivity="27,28" degree="N_px" id="45" type="segment"/>
+      
+         <line connectivity="22,29" degree="N_3" id="46" type="segment"/>
+      
+         <line connectivity="23,30" degree="N_3" id="47" type="segment"/>
+      
+         <line connectivity="24,31" degree="N_3" id="48" type="segment"/>
+      
+         <line connectivity="25,32" degree="N_3" id="49" type="segment"/>
+      
+         <line connectivity="26,33" degree="N_3" id="50" type="segment"/>
+      
+         <line connectivity="27,34" degree="N_py" id="51" type="segment"/>
+      
+         <line connectivity="28,35" degree="N_py" id="52" type="segment"/>
+      
+         <line connectivity="29,30" degree="N_1" id="53" type="segment"/>
+      
+         <line connectivity="30,31" degree="N_2" id="54" type="segment"/>
+      
+         <line connectivity="31,32" degree="N_2" id="55" type="segment"/>
+      
+         <line connectivity="32,33" degree="N_2" id="56" type="segment"/>
+      
+         <line connectivity="33,34" degree="N_1" id="57" type="segment"/>
+      
+         <line connectivity="34,35" degree="N_px" id="58" type="segment"/>
+      
+         <line connectivity="29,36" degree="N_1" id="59" type="segment"/>
+      
+         <line connectivity="30,37" degree="N_2" id="60" type="segment"/>
+      
+         <line connectivity="31,38" degree="N_2" id="61" type="segment"/>
+      
+         <line connectivity="32,39" degree="N_2" id="62" type="segment"/>
+      
+         <line connectivity="33,40" degree="N_2" id="63" type="segment"/>
+      
+         <line connectivity="34,41" degree="N_py" id="64" type="segment"/>
+      
+         <line connectivity="35,42" degree="N_py" id="65" type="segment"/>
+      
+         <line connectivity="36,37" degree="N_1" id="66" type="segment"/>
+      
+         <line connectivity="37,38" degree="N_2" id="67" type="segment"/>
+      
+         <line connectivity="38,39" degree="N_2" id="68" type="segment"/>
+      
+         <line connectivity="39,40" degree="N_2" id="69" type="segment"/>
+      
+         <line connectivity="40,41" degree="N_1" id="70" type="segment"/>
+      
+         <line connectivity="41,42" degree="N_px" id="71" type="segment"/>
+      
+         <line connectivity="36,43" degree="N_1" id="72" type="segment"/>
+      
+         <line connectivity="37,44" degree="N_2" id="73" type="segment"/>
+      
+         <line connectivity="38,45" degree="N_2" id="74" type="segment"/>
+      
+         <line connectivity="39,46" degree="N_2" id="75" type="segment"/>
+      
+         <line connectivity="40,47" degree="N_2" id="76" type="segment"/>
+      
+         <line connectivity="41,48" degree="N_py" id="77" type="segment"/>
+      
+         <line connectivity="42,49" degree="N_py" id="78" type="segment"/>
+      
+         <line connectivity="43,44" degree="N_1" id="79" type="segment"/>
+      
+         <line connectivity="44,45" degree="N_2" id="80" type="segment"/>
+      
+         <line connectivity="45,46" degree="N_2" id="81" type="segment"/>
+      
+         <line connectivity="46,47" degree="N_2" id="82" type="segment"/>
+      
+         <line connectivity="47,48" degree="N_1" id="83" type="segment"/>
+      
+         <line connectivity="48,49" degree="N_px" id="84" type="segment"/>
+      
+         <line connectivity="43,50" degree="N_1" id="85" type="segment"/>
+      
+         <line connectivity="44,51" degree="N_1" id="86" type="segment"/>
+      
+         <line connectivity="45,52" degree="N_1" id="87" type="segment"/>
+      
+         <line connectivity="46,53" degree="N_1" id="88" type="segment"/>
+      
+         <line connectivity="47,54" degree="N_1" id="89" type="segment"/>
+      
+         <line connectivity="48,55" degree="N_py" id="90" type="segment"/>
+      
+         <line connectivity="49,56" degree="N_py" id="91" type="segment"/>
+      
+         <line connectivity="50,51" degree="N_1" id="92" type="segment"/>
+      
+         <line connectivity="51,52" degree="N_1" id="93" type="segment"/>
+      
+         <line connectivity="52,53" degree="N_1" id="94" type="segment"/>
+      
+         <line connectivity="53,54" degree="N_1" id="95" type="segment"/>
+      
+         <line connectivity="54,55" degree="N_1" id="96" type="segment"/>
+      
+         <line connectivity="55,56" degree="N_px" id="97" type="segment"/>
+    
+      </Lines>
+    
+      <Elements el="42">
+      
+         <inLines>
+        
+            <line_element connectivity="1,8,14,7" id="1"/>
+        
+            <line_element connectivity="2,9,15,8" id="2"/>
+        
+            <line_element connectivity="3,10,16,9" id="3"/>
+        
+            <line_element connectivity="4,11,17,10" id="4"/>
+        
+            <line_element connectivity="5,12,18,11" id="5"/>
+        
+            <line_element connectivity="6,13,19,12" id="6"/>
+        
+            <line_element connectivity="14,21,27,20" id="7"/>
+        
+            <line_element connectivity="15,22,28,21" id="8"/>
+        
+            <line_element connectivity="16,23,29,22" id="9"/>
+        
+            <line_element connectivity="17,24,30,23" id="10"/>
+        
+            <line_element connectivity="18,25,31,24" id="11"/>
+        
+            <line_element connectivity="19,26,32,25" id="12"/>
+        
+            <line_element connectivity="27,34,40,33" id="13"/>
+        
+            <line_element connectivity="28,35,41,34" id="14"/>
+        
+            <line_element connectivity="29,36,42,35" id="15"/>
+        
+            <line_element connectivity="30,37,43,36" id="16"/>
+        
+            <line_element connectivity="31,38,44,37" id="17"/>
+        
+            <line_element connectivity="32,39,45,38" id="18"/>
+        
+            <line_element connectivity="40,47,53,46" id="19"/>
+        
+            <line_element connectivity="41,48,54,47" id="20"/>
+        
+            <line_element connectivity="42,49,55,48" id="21"/>
+        
+            <line_element connectivity="43,50,56,49" id="22"/>
+        
+            <line_element connectivity="44,51,57,50" id="23"/>
+        
+            <line_element connectivity="45,52,58,51" id="24"/>
+        
+            <line_element connectivity="53,60,66,59" id="25"/>
+        
+            <line_element connectivity="54,61,67,60" id="26"/>
+        
+            <line_element connectivity="55,62,68,61" id="27"/>
+        
+            <line_element connectivity="56,63,69,62" id="28"/>
+        
+            <line_element connectivity="57,64,70,63" id="29"/>
+        
+            <line_element connectivity="58,65,71,64" id="30"/>
+        
+            <line_element connectivity="66,73,79,72" id="31"/>
+        
+            <line_element connectivity="67,74,80,73" id="32"/>
+        
+            <line_element connectivity="68,75,81,74" id="33"/>
+        
+            <line_element connectivity="69,76,82,75" id="34"/>
+        
+            <line_element connectivity="70,77,83,76" id="35"/>
+        
+            <line_element connectivity="71,78,84,77" id="36"/>
+        
+            <line_element connectivity="79,86,92,85" id="37"/>
+        
+            <line_element connectivity="80,87,93,86" id="38"/>
+        
+            <line_element connectivity="81,88,94,87" id="39"/>
+        
+            <line_element connectivity="82,89,95,88" id="40"/>
+        
+            <line_element connectivity="83,90,96,89" id="41"/>
+        
+            <line_element connectivity="84,91,97,90" id="42"/>
+      
+         </inLines>
+      
+         <inPoints>
+        
+            <point_element connectivity="1,2,9,8" id="1"/>
+        
+            <point_element connectivity="2,3,10,9" id="2"/>
+        
+            <point_element connectivity="3,4,11,10" id="3"/>
+        
+            <point_element connectivity="4,5,12,11" id="4"/>
+        
+            <point_element connectivity="5,6,13,12" id="5"/>
+        
+            <point_element connectivity="6,7,14,13" id="6"/>
+        
+            <point_element connectivity="8,9,16,15" id="7"/>
+        
+            <point_element connectivity="9,10,17,16" id="8"/>
+        
+            <point_element connectivity="10,11,18,17" id="9"/>
+        
+            <point_element connectivity="11,12,19,18" id="10"/>
+        
+            <point_element connectivity="12,13,20,19" id="11"/>
+        
+            <point_element connectivity="13,14,21,20" id="12"/>
+        
+            <point_element connectivity="15,16,23,22" id="13"/>
+        
+            <point_element connectivity="16,17,24,23" id="14"/>
+        
+            <point_element connectivity="17,18,25,24" id="15"/>
+        
+            <point_element connectivity="18,19,26,25" id="16"/>
+        
+            <point_element connectivity="19,20,27,26" id="17"/>
+        
+            <point_element connectivity="20,21,28,27" id="18"/>
+        
+            <point_element connectivity="22,23,30,29" id="19"/>
+        
+            <point_element connectivity="23,24,31,30" id="20"/>
+        
+            <point_element connectivity="24,25,32,31" id="21"/>
+        
+            <point_element connectivity="25,26,33,32" id="22"/>
+        
+            <point_element connectivity="26,27,34,33" id="23"/>
+        
+            <point_element connectivity="27,28,35,34" id="24"/>
+        
+            <point_element connectivity="29,30,37,36" id="25"/>
+        
+            <point_element connectivity="30,31,38,37" id="26"/>
+        
+            <point_element connectivity="31,32,39,38" id="27"/>
+        
+            <point_element connectivity="32,33,40,39" id="28"/>
+        
+            <point_element connectivity="33,34,41,40" id="29"/>
+        
+            <point_element connectivity="34,35,42,41" id="30"/>
+        
+            <point_element connectivity="36,37,44,43" id="31"/>
+        
+            <point_element connectivity="37,38,45,44" id="32"/>
+        
+            <point_element connectivity="38,39,46,45" id="33"/>
+        
+            <point_element connectivity="39,40,47,46" id="34"/>
+        
+            <point_element connectivity="40,41,48,47" id="35"/>
+        
+            <point_element connectivity="41,42,49,48" id="36"/>
+        
+            <point_element connectivity="43,44,51,50" id="37"/>
+        
+            <point_element connectivity="44,45,52,51" id="38"/>
+        
+            <point_element connectivity="45,46,53,52" id="39"/>
+        
+            <point_element connectivity="46,47,54,53" id="40"/>
+        
+            <point_element connectivity="47,48,55,54" id="41"/>
+        
+            <point_element connectivity="48,49,56,55" id="42"/>
+      
+         </inPoints>
+    
+      </Elements>
+  
+   </Geometry>
+  
+   <Physics>
+    
+      <PhysicalParameters J_p="4e-7*pi*sqrt(2)*8.6805e6*exp(j*(-1.4096))" J_s="4e-7*pi*sqrt(2)*1.5640e6*exp(j*(2.9893))" jw="j*2*pi*1e6*4*pi*1e-7" mu0="1" mur_c="3000" mur_p="100" sigma_1="0*jw" sigma_2="8.41e6*jw"/>
+    
+      <Regions nR="4">
+      
+         <region Conductivity="sigma_1" CurrentDensity="J_p" ElementList="27" MagneticMaterial="mu0" id="1" name="C_p"/>
+      
+         <region Conductivity="sigma_1" CurrentDensity="J_s" ElementList="15" MagneticMaterial="mu0" id="2" name="C_s"/>
+      
+         <region Conductivity="sigma_1" CurrentDensity="0" ElementList="8,9,10,14,16,26,28,32,33,34" MagneticMaterial="mur_c" id="3" name="core"/>
+      
+         <region Conductivity="sigma_2" CurrentDensity="0" ElementList="6,12,18,24,30,36,42" MagneticMaterial="mur_p" id="4" name="plate"/>
+    
+      </Regions>
+    
+      <BoundaryConditions dir_lines="1,2,3,4,5,6,13,26,39,52,65,78,91,97,96,95,94,93,92,85,72,59,46,33,20,7" dir_points="1,2,3,4,5,6,7,14,21,28,35,42,49,56,55,54,53,52,51,50,43,36,29,22,15,8"/>
+  
+   </Physics>
+
+</Body>

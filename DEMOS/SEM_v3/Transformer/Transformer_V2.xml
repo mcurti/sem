@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Body>
   <Geometry>
-    <Parameters R_1="1.55" R_2="3.00" R_3="5.80" R_4="7.15" R_5="7.65" R_6="R_5+3*delta_s" R_7="R_5+1" h_b="(18.5-2*(h_c+h_w)-l_ag)/2" h_c="1.40" h_w="2.80" l_ag="1.00" N_1="15" N_2="15" N_3="15" N_px="100" N_py="15" delta_s="sqrt(1/(pi*1*4e-7*pi*1000*8410))"></Parameters>
-    <Points p="64">
+    <Parameters R_1="1.55e-3" R_2="3.00e-3" R_3="5.80e-3" R_4="7.15e-3" R_5="7.65e-3" R_6="R_5+1e-3" h_b="(18.5e-3-2*(h_c+h_w)-l_ag)/2" h_c="1.40e-3" h_w="2.80e-3" l_ag="1.00e-3" N_1="9" N_2="9" N_3="9" N_px="15" N_py="9" delta_s="sqrt(1/(pi*1e6*4e-7*pi*100*8.41e6))"></Parameters>
+    <Points p="56">
       <point id="1" address="0,0" />
       <point id="2" address="R_1,0" />
       <point id="3" address="R_2,0" />
@@ -59,16 +59,8 @@
       <point id="54" address="R_4,2*h_b+2*h_c+2*h_w+l_ag" />
       <point id="55" address="R_5,2*h_b+2*h_c+2*h_w+l_ag" />
       <point id="56" address="R_6,2*h_b+2*h_c+2*h_w+l_ag"></point>
-      <point id="57" address="R_7,0"></point>
-      <point id="58" address="R_7,h_b"></point>
-      <point id="59" address="R_7,h_b+h_c"></point>
-      <point id="60" address="R_7,h_b+h_c+h_w"></point>
-      <point id="61" address="R_7,h_b+h_c+h_w+l_ag"></point>
-      <point id="62" address="R_7,h_b+h_c+2*h_w+l_ag"></point>
-      <point id="63" address="R_7,h_b+2*h_c+2*h_w+l_ag"></point>
-      <point id="64" address="R_7,2*h_b+2*h_c+2*h_w+l_ag"></point>
     </Points>
-    <Lines l="112">
+    <Lines l="97">
       <line id="1" connectivity="1,2" type="segment" degree="N_1" />
       <line id="2" connectivity="2,3" type="segment" degree="N_1" />
       <line id="3" connectivity="3,4" type="segment" degree="N_1" />
@@ -166,23 +158,8 @@
       <line id="95" connectivity="53,54" type="segment" degree="N_1" />
       <line id="96" connectivity="54,55" type="segment" degree="N_1" />
       <line id="97" connectivity="55,56" type="segment" degree="N_px" />
-      <line id="98" connectivity="7,57" type="segment" degree="N_1" />
-      <line id="99" connectivity="14,58" type="segment" degree="N_1" />
-      <line id="100" connectivity="21,59" type="segment" degree="N_1" />
-      <line id="101" connectivity="28,60" type="segment" degree="N_1" />
-      <line id="102" connectivity="35,61" type="segment" degree="N_1" />
-      <line id="103" connectivity="42,62" type="segment" degree="N_1" />
-      <line id="104" connectivity="49,63" type="segment" degree="N_1" />
-      <line id="105" connectivity="56,64" type="segment" degree="N_1" />
-      <line id="106" connectivity="57,58" type="segment" degree="N_1" />
-      <line id="107" connectivity="58,59" type="segment" degree="N_1" />
-      <line id="108" connectivity="59,60" type="segment" degree="N_1" />
-      <line id="109" connectivity="60,61" type="segment" degree="N_1" />
-      <line id="110" connectivity="61,62" type="segment" degree="N_1" />
-      <line id="111" connectivity="62,63" type="segment" degree="N_1" />
-      <line id="112" connectivity="63,64" type="segment" degree="N_1" />
     </Lines>
-    <Elements el="49">
+    <Elements el="42">
       <inLines>
         <line_element id="1" connectivity="1,8,14,7" />
         <line_element id="2" connectivity="2,9,15,8" />
@@ -226,13 +203,6 @@
         <line_element id="40" connectivity="82,89,95,88" />
         <line_element id="41" connectivity="83,90,96,89" />
         <line_element id="42" connectivity="84,91,97,90" />
-        <line_element id="43" connectivity="98,106,99,13" />
-        <line_element id="44" connectivity="99,107,100,26" />
-        <line_element id="45" connectivity="100,108,101,39" />
-        <line_element id="46" connectivity="101,109,102,52" />
-        <line_element id="47" connectivity="102,110,103,65" />
-        <line_element id="48" connectivity="103,111,104,78" />
-        <line_element id="49" connectivity="104,112,105,91" />
       </inLines>
       <inPoints>
         <point_element id="1" connectivity="1,2,9,8" />
@@ -277,24 +247,17 @@
         <point_element id="40" connectivity="46,47,54,53" />
         <point_element id="41" connectivity="47,48,55,54" />
         <point_element id="42" connectivity="48,49,56,55" />
-        <point_element id="43" connectivity="7,57,58,14" />
-        <point_element id="44" connectivity="14,58,59,21" />
-        <point_element id="45" connectivity="21,59,60,28" />
-        <point_element id="46" connectivity="28,60,61,35" />
-        <point_element id="47" connectivity="35,61,62,42" />
-        <point_element id="48" connectivity="42,62,63,49" />
-        <point_element id="49" connectivity="49,63,64,56" />
       </inPoints>
     </Elements>
   </Geometry>
   <Physics>
-    <PhysicalParameters mu0="1" sigma_1="0*jw" sigma_2="8410*jw" J_p="sqrt(2)*5*pi*4e-7" J_s="0" mur_c="3000" mur_p="1000" jw="j*2*pi*1*4*pi*1e-7" />
+    <PhysicalParameters mu0="1" sigma_1="0*jw" sigma_2="8.41e6*jw" J_p="4e-7*pi*sqrt(2)*8.6805e6*exp(j*(-1.4096))" J_s="4e-7*pi*sqrt(2)*1.5640e6*exp(j*(2.9893))" mur_c="3000" mur_p="100" jw="j*2*pi*1e6*4*pi*1e-7" />
     <Regions nR="4">
       <region id="1" name="C_p" CurrentDensity="J_p" MagneticMaterial="mu0" ElementList="27" Conductivity="sigma_1"></region>
       <region id="2" name="C_s" CurrentDensity="J_s" MagneticMaterial="mu0" ElementList="15" Conductivity="sigma_1" />
       <region id="3" name="core" CurrentDensity="0" MagneticMaterial="mur_c" ElementList="8,9,10,14,16,26,28,32,33,34" Conductivity="sigma_1" />
-      <region id="4" name="plate" CurrentDensity="0" MagneticMaterial="mur_p" ElementList="6,12,18,24,30,36,42,43,44,45,46,47,48,49" Conductivity="sigma_2" />
+      <region id="4" name="plate" CurrentDensity="0" MagneticMaterial="mur_p" ElementList="6,12,18,24,30,36,42" Conductivity="sigma_2" />
     </Regions>
-    <BoundaryConditions dir_points="1,2,3,4,5,6,7,57,58,59,60,61,62,63,64,56,55,54,53,52,51,50,43,36,29,22,15,8" dir_lines="1,2,3,4,5,6,98,106,107,108,109,110,111,112,105,97,96,95,94,93,92,85,72,59,46,33,20,7"></BoundaryConditions>
+    <BoundaryConditions dir_points="1,2,3,4,5,6,7,14,21,28,35,42,49,56,55,54,53,52,51,50,43,36,29,22,15,8" dir_lines="1,2,3,4,5,6,13,26,39,52,65,78,91,97,96,95,94,93,92,85,72,59,46,33,20,7"></BoundaryConditions>
   </Physics>
 </Body>
