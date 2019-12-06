@@ -2,11 +2,13 @@
 % Element Matrix implementation
 %------------------------------------------------------------------
 function [Eij, Jij] = element_matrix_GJ(dataElement)
-Lx   = dataElement.Lx;    Ly   = dataElement.Ly;
+% Lx   = dataElement.Lx;    Ly   = dataElement.Ly;
 Lxp  = dataElement.Lxp;   Lyp  = dataElement.Lyp;
+Dx  = dataElement.Dx;
+Dy  = dataElement.Dy;
 Xcsi = diag(dataElement.Xcsi(:));  Ycsi = diag(dataElement.Ycsi(:));
 Xeta = diag(dataElement.Xeta(:));  Yeta = diag(dataElement.Yeta(:));
-Jin    = diag(1./dataElement.J(:));
+% Jin    = diag(1./dataElement.J(:));
 NU   = dataElement.nu(:);
 a    =  dataElement.a;
 W    = dataElement.W(:);
@@ -16,8 +18,7 @@ bh = dataElement.bh;
 
 %% Computing the magnetic Field and reluctances
 % 1. Computing the derivative matrices
-Dx = Jin*( Yeta*Lx - Ycsi*Ly);
-Dy = Jin*(-Xeta*Lx + Xcsi*Ly);
+
 
 
 

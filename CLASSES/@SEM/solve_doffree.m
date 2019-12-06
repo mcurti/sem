@@ -5,7 +5,7 @@
 %
 % the set of linearly independent functions for polar coordinate system
 %==========================================================================
-function obj = solve(obj)
+function obj = solve_doffree(obj)
 
 % Initiating the variables
 
@@ -18,25 +18,22 @@ obj.NonlinearSolver.K  = cell(iter,Nel);
 tot_unknowns = (obj.Physics.ProblemData.inElementsUnknowns + ...
     obj.Physics.ProblemData.linesUnknowns + obj.Physics.ProblemData.Np);
 if isempty(obj.Fourier)
-    fourier_index = [];
-    spc = tot_unknowns;
+%     fourier_index = [];
+%     spc = tot_unknowns;
     Y_mag = zeros(obj.Problem.ProblemData.pointVectorLocation(end),1);
 else
-    space2freq = obj.Fourier_matrix.Efrequency;
-    freq2space = obj.Fourier_matrix.Espace;
-    fourier_index = (1:(size(freq2space,2))) + size(freq2space,1);
-    [spr, spc] = size(space2freq); [frr, frc] = size(freq2space);
-    Y_mag = [zeros(...
-        obj.Problem.ProblemData.pointVectorLocation(end),1); ...
-        zeros(size(obj.Fourier_matrix.Efrequency,1),1)];
+    [Fourier, CM] = obj.Fourier.fourier_frequency_matrix_doffree(obj.Problem.ProblemData);
+    Y_mag = zeros(...
+        obj.Problem.ProblemData.pointVectorLocation(end),1);
+%     spc = tot_unknowns;
 end
-SEM_index = 1:tot_unknowns;
+
 
 prev_PHI = Y_mag;
 % delta_PHI = prev_PHI(SEM_index);
 
-E      = zeros(spc);
-JacFin = E;
+% E      = zeros(spc);
+% JacFin = E;
 dataPostProcessing.xmlContent   = ...
     obj.Geometry.GeometryElement;
 dataPostProcessing.ProblemData  = obj.Physics.ProblemData;
@@ -103,7 +100,7 @@ for ii = 1:iter
     
     fprintf('Building the global matrix at iteration %d \n'...
         ,ii);
-    dataPostProcessing.PHI          =  PHI(SEM_index);% + 0*delta_PHI;
+    dataPostProcessing.PHI          =  PHI;% + 0*delta_PHI;
     %         dataPostProcessing.PHI = [];
     obj.PProcessing = PostProcessing(dataPostProcessing);
     obj.PProcessing = obj.PProcessing.compute_B;
@@ -127,16 +124,10 @@ for ii = 1:iter
     %------------------------------------------------------
     new_material.Permeability = MU;
     obj.Problem = obj.Problem.updateMaterials(new_material);
-    MagMatrix = obj.Problem.global_matrix_contour(KK);
+%     MagMatrix = obj.Problem.global_matrix_contour(KK);
 %     JacMatrix = obj.Problem.global_matrix_jacobian(KK,obj.PProcessing.Potential);
-    
-    [obj.Problem.Global_Matrix, JacMatrix]   = obj.Problem.global_matrix_and_jacobian(KK,obj.PProcessing.Potential);
-    if isempty(obj.Fourier)
-        Y_mag = MagMatrix*dataPostProcessing.PHI(SEM_index);
-    else
-        Y_mag = [MagMatrix*dataPostProcessing.PHI(SEM_index); ...
-            zeros(size(obj.Fourier_matrix.Efrequency,1),1)];
-    end
+    [Global_Matrix, JacMatrix]   = obj.Problem.global_matrix_and_jacobian(KK,obj.PProcessing.Potential);
+%         Y_mag = MagMatrix*dataPostProcessing.PHI;
     
 %     obj.Problem = obj.Problem.global_matrix;
     
@@ -151,20 +142,13 @@ for ii = 1:iter
     %         E = cat(1,E1,space2freq);
     
     if isempty(obj.Fourier)
-        E = obj.Problem.Global_Matrix;
+        E = Global_Matrix;
         JacFin = JacMatrix;
         Y = obj.Problem.Y.vector;
     else
-        E(SEM_index,SEM_index)      = obj.Problem.Global_Matrix;
-        JacFin(SEM_index,SEM_index) = JacMatrix;
-        if ii == 1
-            E(end-spr+1:end,end-spc+1:end) = space2freq;
-            E(SEM_index(end)-frr+1:SEM_index(end),end-frc+1:end) = freq2space;
-            
-            JacFin(end-spr+1:end,end-spc+1:end) = space2freq;
-            JacFin(SEM_index(end)-frr+1:SEM_index(end),end-frc+1:end) = freq2space;
-        end
-        Y = cat(2,obj.Problem.Y.vector, zeros(1,size(space2freq,1)));
+        E      = Global_Matrix + Fourier;
+        JacFin = JacMatrix + Fourier;
+        Y = obj.Problem.Y.vector;
     end
     fprintf('Computation time for concatenation is %.4f \n',toc - s_time)
     
@@ -220,7 +204,7 @@ end
 %                     obj.NonlinearSolver.K{ii,k}  = KK{k};
 %                 end
     %                 prev_PHI = PHI;
-    err(ii)  = norm(delta_PHI(SEM_index),Inf)/max(abs(PHI(SEM_index)));%/mean(abs(PHI(SEM_index)));
+    err(ii)  = norm(delta_PHI,Inf)/max(abs(PHI));%/mean(abs(PHI(SEM_index)));
 %     prev_PHI = PHI(SEM_index);
 %         init_phi = obj.PProcessing.Potential;
     %----------------------------------------------------------
@@ -273,13 +257,13 @@ end
 
 
 if max(abs(Y_mag)>0)
-    PHI_rem = S(SEM_index,SEM_index)\Y_mag(SEM_index);
+    PHI_rem = S\Y_mag;
 else
-    PHI_rem = PHI(SEM_index)*0;
-    dataPostProcessing.PHI = PHI(SEM_index);
+    PHI_rem = PHI*0;
+    dataPostProcessing.PHI = PHI;
     obj.PProcessing = PostProcessing(dataPostProcessing);
 end
-dataPostProcessing.PHI = PHI_rem(SEM_index);
+dataPostProcessing.PHI = PHI_rem;
 
 Pp = PostProcessing(dataPostProcessing);
 
@@ -293,7 +277,7 @@ if isempty(obj.Fourier)
 else
     Q    = obj.Fourier.Edata.Harmonics;
     Nfel = obj.Fourier.Edata.Nfel;
-    X = PHI(fourier_index);
+    X = CM*PHI;
     
     c1 = zeros(1,Q*Nfel); c2 = zeros(1,Q*Nfel); c3 = zeros(1,Q*Nfel);
     c4 = zeros(1,Q*Nfel); %Bx0 = zeros(1,1);
@@ -309,7 +293,7 @@ else
     
     Az0 = X(end);
     
-    s  = zeros(1,numel(fourier_index));
+    s  = zeros(1,numel(X));
     obj.Fourier = obj.Fourier.update_coefficients(s, c1, c2, c3, c4, Az0, Bx0);
 end
 end

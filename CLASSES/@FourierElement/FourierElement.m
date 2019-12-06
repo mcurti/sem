@@ -241,6 +241,9 @@ classdef FourierElement
         % ProblemData structure is needed at the input
         Efrequency = fourier_frequency_matrix...
             (obj,ProblemData,Geometry,FourierData)
+        % For doffree
+        [Efrequency, CM] = fourier_frequency_matrix_doffree...
+            (obj,ProblemData,Geometry,FourierData)
         %------------------------------------------------------------------
         % Function to evaluate the forces
         Fx = MaxwellForce(obj,El)
@@ -250,6 +253,10 @@ classdef FourierElement
         function obj = update_x_start(obj, new_x)
             obj.Edata.x_start = new_x;
         end
+        
+        %------------------------------------------------------------------
+        % Function to develop the doffree method
+        tmp = doffree(obj)
         %------------------------------------------------------------------
         % Function to compute the force in a Fourier region based on wirtual
         % wor

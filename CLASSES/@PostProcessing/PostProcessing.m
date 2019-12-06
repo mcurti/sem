@@ -113,6 +113,38 @@ classdef PostProcessing < matlab.mixin.SetGet
             end
             
         end
+        
+         %------------------------------------------------------------------
+        % Compute the magnetic flux density
+        %------------------------------------------------------------------
+        
+        function obj = compute_B_axi(obj)
+            Nel = obj.ProblemData.Nel;
+            
+            
+            obj.Flux.x_comp = cell(1,Nel);
+            obj.Flux.y_comp = cell(1,Nel);
+            obj.Flux.abs    = cell(1,Nel);
+            
+            
+            % Obtainig the raw results from the B
+            for k = 1:Nel
+                          
+                [Azx, Azy] = ...
+                    sem_gradient(obj.Potential{k}, ...
+                    obj.metrics.Lx{k}, obj.metrics.Ly{k}, ...
+                    obj.metrics.Xcsi{k}, obj.metrics.Xeta{k}, ...
+                    obj.metrics.Ycsi{k}, obj.metrics.Yeta{k}, ...
+                    obj.metrics.J{k}, obj.ProblemData.ElementSize{k});
+                
+                obj.Flux.x_comp{k} =  Azy./obj.mappings.Xm{k};
+                obj.Flux.y_comp{k} = -Azx./obj.mappings.Xm{k};
+                
+                obj.Flux.abs{k} = abs(obj.Flux.x_comp{k} + ...
+                                   1i*obj.Flux.y_comp{k});
+            end
+            
+        end
         %------------------------------------------------------------------
         % Plot the solutions on LGL nodes with surf
         %------------------------------------------------------------------
@@ -158,17 +190,41 @@ classdef PostProcessing < matlab.mixin.SetGet
             % Plot contours
             for k = 1:Nel
                 contour(obj.mappings.Xm{k},obj.mappings.Ym{k},...
-                    obj.Potential{k},flux_lines);
+                    obj.Potential{k},flux_lines,'linewidth',1);
+            end
+        end
+        
+        %------------------------------------------------------------------
+        % Plot the solution on the LGL nodes with contour
+        %------------------------------------------------------------------
+        function plot_contour_axi(obj,varargin)
+            Nel = obj.ProblemData.Nel;
+            
+            % Computing the flux lines
+            if nargin == 2
+                flux_lines = ...
+                            linspace(min(varargin{1}),max(varargin{1}),20);
+            else
+                flux_lines = linspace(min(obj.PHI(:)),max(obj.PHI(:)),20);
+            end
+            
+            % Plot contours
+            for k = 1:Nel
+                contour(obj.mappings.Xm{k},obj.mappings.Ym{k},...
+                    obj.Potential{k}*1./obj.mappings.Xm{k},flux_lines);
             end
         end
         
         %------------------------------------------------------------------
         % Plot a quantity on SEM nodes
         %------------------------------------------------------------------
-        function plot_surf_var(obj,var)
-            Nel = obj.ProblemData.Nel;
+        function plot_surf_var(obj,var,Nel)
+            if nargin ==2
+            Nel = 1:obj.ProblemData.Nel;
+            end
+            
                        
-                    for k = 1:Nel
+                    for k = Nel
                         surf(obj.mappings.Xm{k},obj.mappings.Ym{k},...
                             var{1,k},'edgecolor','none');
                     end

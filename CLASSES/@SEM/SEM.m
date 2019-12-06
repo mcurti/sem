@@ -53,6 +53,7 @@ classdef SEM < matlab.mixin.SetGet
             dataProblem.ProblemData = obj.Physics.ProblemData;
             dataProblem.Sources     = obj.Physics.Sources;
             dataProblem.metrics     = obj.Geometry.metrics;
+            dataProblem.mappings     = obj.Geometry.mappings;
             dataProblem.xmlContent  = obj.Geometry.GeometryElement;
             dataProblem.Materials   = obj.Physics.Materials;
             
@@ -95,6 +96,12 @@ classdef SEM < matlab.mixin.SetGet
         % linear problem and solve the problem
         %------------------------------------------------------------------
         obj = solve(obj)
+        
+        %------------------------------------------------------------------
+        % Solve function; Bulding the right and the left hand side of the 
+        % linear problem and solve the problem and Fourier doffree
+        %------------------------------------------------------------------
+        obj = solve_doffree(obj)
         %------------------------------------------------------------------
         % Function to interpolate on FEM nodes, used to check the
         % correctness of the problem

@@ -38,7 +38,8 @@ for k = 1:Nel
     dataElement.a    = Potential{k}(:);
     dataElement.kk = kk{k};
     elementsData     = obj.ProblemData.elements;
-    
+    dataElement.Dx = diag(1./dataElement.J(:))*( diag(dataElement.Yeta(:))*dataElement.Lx - diag(dataElement.Ycsi(:))*dataElement.Ly);
+    dataElement.Dy = diag(1./dataElement.J(:))*(-diag(dataElement.Xeta(:))*dataElement.Lx + diag(dataElement.Xcsi(:))*dataElement.Ly);
     % Connectivity of elements
     
     if any(k==elementsData.periodic)

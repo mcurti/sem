@@ -47,6 +47,6 @@ Tf  = zeros([size(Dx) 4]);
 b = zeros([size(NU) 2]);
 b(:,:,1) = Lxp; b(:,:,2) = Lyp;
 
-DB = div(Tnu,D); DBF = div(Tf,DB);
-Eij = -div(b,DBF);
+DB = div(Tnu,D,2,1); DBF = div(Tf,DB,2,1);
+Eij = -div(b,DBF,1,1);
 end 
