@@ -33,5 +33,5 @@ b(:,:,1) = Lxp; b(:,:,2) = Lyp;
 % Eij = -(b1*NU*diag(1./J(:))*W*a1 + b2*NU*diag(1./J(:))*W*a2);
 % Eij =   - (Lxp*W*NU*(A*Lx - B*Ly) + Lyp*W*NU*(C*Ly - B*Lx));
 
-Eij = - div(b,F,1,1);
+Eij = - div(b,F,0,1);
 end 

@@ -10,28 +10,32 @@ function parameter_loader( parameters )
 [K, ~] = size(parameters);
 % Loading in the local workspace
 
-check_list = true(1,K);
-prev_list  = true(1,K);
-while sum(check_list)>0
-    for k = 1:K
-        try
-            eval([parameters{k,1}, '=',parameters{k,2}, ';']);
-            assignin('caller',parameters{k,1},eval(parameters{k,1}))
-            check_list(k) = false;
-        catch
-            check_list(k) = true;
-        end
+check_list = false(1,K);
+
+for k = 1:K
+    try
+        eval([parameters{k,1}, '=',parameters{k,2}, ';']);
+        assignin('caller',parameters{k,1},eval(parameters{k,1}))
+    catch
+        check_list(k) = true;
     end
-    difference = xor(check_list,prev_list);
-    
-    if sum(difference)==0
-        
-        error(...
-        'An error occured while definig the parameters %s\n'...
-        ,parameters{check_list,1});
-    else
-        prev_list = check_list;
+end
+check_list = find(check_list==true);
+% running the parameters with errors
+check_list1 = false(1,K);
+for k = check_list
+    try
+        eval([parameters{k,1}, '=',parameters{k,2}, ';']);
+        assignin('caller',parameters{k,1},eval(parameters{k,1}))
+    catch
+        check_list1(k) = true;
     end
+end
+
+check_list1 = find(check_list1==true);
+for k = check_list1
+    eval([parameters{k,1}, '=',parameters{k,2}, ';']);
+    assignin('caller',parameters{k,1},eval(parameters{k,1}))
 end
 
 end

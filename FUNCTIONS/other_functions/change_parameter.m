@@ -5,7 +5,7 @@
 %
 % Change a parameter in the workspace of a class
 %==========================================================================
-function out = change_parameter( obj,Parameter,Value )
+function obj = change_parameter( obj,Parameter,Value )
 
 % Estimating the number of parameters
 Nparam = length(obj.parameters);
@@ -14,7 +14,6 @@ Nparam = length(obj.parameters);
 for k = 1:Nparam
     if strcmp(obj.parameters{k,1},Parameter)
         obj.parameters{k,2} = Value;
-        out = obj.parameters;
         return
     end
 end

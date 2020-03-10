@@ -14,7 +14,6 @@ classdef Problem < matlab.mixin.SetGet
         ProblemData;   % Various parameters of the problem
         Sources;       % Sources in the geometry
         metrics        % Metrics of the geometry
-        mappings        % Metrics of the geometry
         xmlContent     % Info from the xml file
         Materials      % Materials of the problem
         tmp_Element_Matrix
@@ -29,7 +28,6 @@ classdef Problem < matlab.mixin.SetGet
             obj.ProblemData = dataProblem.ProblemData;
             obj.Sources     = dataProblem.Sources;
             obj.metrics     = dataProblem.metrics;
-            obj.mappings    = dataProblem.mappings;
             obj.xmlContent  = dataProblem.xmlContent;
             obj.Materials   = dataProblem.Materials;
         end
@@ -147,11 +145,6 @@ classdef Problem < matlab.mixin.SetGet
         % Build the global matrix
         %------------------------------------------------------------------
         obj = global_matrix(obj)
-        
-        %------------------------------------------------------------------
-        % Build the global matrix in axysimmetric coordinates
-        %------------------------------------------------------------------
-        obj = global_matrix_axi(obj)
         %------------------------------------------------------------------
         % Build the global matrix without the permeability
         %------------------------------------------------------------------
@@ -177,16 +170,6 @@ classdef Problem < matlab.mixin.SetGet
         function obj = updateMaterials(obj,NewMaterials)
             obj.Materials     = NewMaterials;
         end
-        
-        %------------------------------------------------------------------
-        % jacobian and quadrature product
-        %------------------------------------------------------------------
-        qj = quad_jacobian(obj)
-        
-        %------------------------------------------------------------------
-        % inverse r
-        %------------------------------------------------------------------
-        rm1 = inverse_r(obj)
 
     end
     

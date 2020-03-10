@@ -127,10 +127,9 @@ for ii = 1:iter
     %------------------------------------------------------
     new_material.Permeability = MU;
     obj.Problem = obj.Problem.updateMaterials(new_material);
-    MagMatrix = obj.Problem.global_matrix_contour(KK);
+    [MagMatrix, JacMatrix] = obj.Problem.global_matrix_and_jacobian(KK,obj.PProcessing.Potential);
+%     MagMatrix = obj.Problem.global_matrix_contour(KK);
 %     JacMatrix = obj.Problem.global_matrix_jacobian(KK,obj.PProcessing.Potential);
-    
-    [obj.Problem.Global_Matrix, JacMatrix]   = obj.Problem.global_matrix_and_jacobian(KK,obj.PProcessing.Potential);
     if isempty(obj.Fourier)
         Y_mag = MagMatrix*dataPostProcessing.PHI(SEM_index);
     else
@@ -138,7 +137,7 @@ for ii = 1:iter
             zeros(size(obj.Fourier_matrix.Efrequency,1),1)];
     end
     
-%     obj.Problem = obj.Problem.global_matrix;
+    obj.Problem = obj.Problem.global_matrix;
     
     s_time = toc;
     
