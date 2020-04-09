@@ -206,7 +206,7 @@ classdef Physics
         % Update Parameters
         %------------------------------------------------------------------
         function obj = setParameter(obj,Parameter,Value)
-            obj = change_parameter( obj,Parameter,Value );
+            obj.parameters = change_parameter( obj,Parameter,Value );
         end
     end
     
