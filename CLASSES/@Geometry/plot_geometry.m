@@ -31,7 +31,7 @@ switch mode
             temp_line = obj.lines.vector{k};
             hp = plot(temp_line(1,:),temp_line(2,:));
                                middle = round(numel(temp_line(1,:))/2);
-                               text(temp_line(1,middle)-1,temp_line(2,middle)-1,sprintf('%d',k),'HorizontalAlignment','right','Color','green')
+%                                text(temp_line(1,middle)-1,temp_line(2,middle)-0.05,sprintf('%d',k),'HorizontalAlignment','right','Color','green')
             
             if exist('PropertiesNumber','var')
                 for ii = 1:PropertiesNumber
@@ -77,9 +77,8 @@ switch mode
         
         for k = 1:LinesNumber
             
-            temp_line = obj.lines.vector{k};
-            middle = round(numel(temp_line(1,:))/2);
-            text(temp_line(1,middle),temp_line(2,middle),sprintf('%d',k),'HorizontalAlignment','right','Color','blue')
+            middle = mean(obj.lines.vector{k},2);
+            text(middle(1),middle(2),sprintf('%d',k),'HorizontalAlignment','right','Color','blue')
             
             
         end
@@ -89,7 +88,7 @@ switch mode
         
         for k = 1:PointsNumber
             
-            text(obj.points.coordinates(k,1),obj.points.coordinates(k,2),sprintf('%d',k),'HorizontalAlignment','right','Color','red')
+            text(obj.points.coordinates(k,1),obj.points.coordinates(k,2),sprintf('%d',k),'HorizontalAlignment','left','Color','red')
             
             
         end
