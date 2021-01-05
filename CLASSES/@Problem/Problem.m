@@ -25,13 +25,13 @@ classdef Problem < matlab.mixin.SetGet
         %------------------------------------------------------------------
         % Constructor
         %------------------------------------------------------------------
-        function obj = Problem(dataProblem)
-            obj.ProblemData = dataProblem.ProblemData;
-            obj.Sources     = dataProblem.Sources;
-            obj.metrics     = dataProblem.metrics;
-            obj.mappings    = dataProblem.mappings;
-            obj.xmlContent  = dataProblem.xmlContent;
-            obj.Materials   = dataProblem.Materials;
+        function obj = Problem(G, Ph)
+            obj.ProblemData = Ph.ProblemData;
+            obj.Sources     = Ph.Sources;
+            obj.metrics     = G.metrics;
+            obj.mappings    = G.mappings;
+            obj.xmlContent  = G.GeometryElement;
+            obj.Materials   = Ph.Materials;
         end
         %------------------------------------------------------------------
         % Load the Y sources, right hand side

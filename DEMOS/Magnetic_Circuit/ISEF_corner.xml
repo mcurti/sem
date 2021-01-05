@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Body>
   <Geometry>
-    <Parameters mm="1e-3" wiron="10*mm" hcoil="3*mm" wout="12*mm" rin="2*mm" rout="5*mm" Ntmp="5" hiron="18*mm" wcoil="5*mm" ironnodes="Ntmp" cornernodes="Ntmp" nodes1="Ntmp" ycoilsnodes="Ntmp" xcoilndes="Ntmp" nodes2="Ntmp" nodes3="Ntmp"></Parameters>
+    <Parameters wiron="10" hcoil="10" wout="12" rin="2" rout="5" Ntmp="6" hiron="18" wcoil="5" ironnodes="22" cornernodes="10" nodes1="11" ycoilsnodes="5" xcoilndes="4" nodes2="14" nodes3="4"></Parameters>
     <Points p="23">
       <point id="1" address="0,hiron+wiron+wout" />
       <point id="2" address="wout + rout,hiron+wiron+wout" />
@@ -75,7 +75,7 @@
         <line_element id="5" connectivity="23,13,8,12" />
         <line_element id="6" connectivity="24,17,14,13" />
         <line_element id="7" connectivity="14,20,15,9" />
-        <line_element id="8" connectivity="15,21,16,10" />
+        <line_element id="8" connectivity="21,16,10,-15" />
         <line_element id="9" connectivity="25,18,20,17" />
         <line_element id="10" connectivity="26,19,21,18" />
         <line_element id="11" connectivity="33,28,22,27" />
@@ -92,7 +92,7 @@
         <point_element id="5" connectivity="10,11,6,5" />
         <point_element id="6" connectivity="11,12,13,6" />
         <point_element id="7" connectivity="6,13,14,7" />
-        <point_element id="8" connectivity="7,14,15,8" />
+        <point_element id="8" connectivity="14,15,8,7" />
         <point_element id="9" connectivity="12,16,14,13" />
         <point_element id="10" connectivity="16,17,15,14" />
         <point_element id="11" connectivity="18,19,10,9" />
@@ -104,11 +104,11 @@
     </Elements>
   </Geometry>
   <Physics>
-    <PhysicalParameters mu0="1" J="5*pi*4e-7" Js="2e-3" mur="1000" />
+    <PhysicalParameters mu0="1" J="1" muiron="20*mu0" />
     <Regions nR="3">
-      <region id="1" name="coilN" CurrentDensity="-J" MagneticMaterial="mu0" ElementList="12"></region>
-      <region id="2" name="coilP" CurrentDensity="J" MagneticMaterial="mu0" ElementList="14" />
-      <region id="3" name="iron" CurrentDensity="0" MagneticMaterial="mu0*H+2*Js/pi.*atan((pi*(mur-1)*mu0*H)./(2*Js))" ElementList="6,7,8,13" InitialPermeability="1000" />
+      <region id="1" name="coilP" CurrentDensity="-J" MagneticMaterial="mu0" ElementList="12" />
+      <region id="2" name="coilN" CurrentDensity="J" MagneticMaterial="mu0" ElementList="14" />
+      <region id="3" name="iron" CurrentDensity="0" MagneticMaterial="muiron" ElementList="6,7,8,13" />
     </Regions>
     <BoundaryConditions dir_points="1,2,3,4,9,18" dir_lines="1,2,3,11,27"></BoundaryConditions>
   </Physics>

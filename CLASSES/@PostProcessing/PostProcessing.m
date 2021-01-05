@@ -23,17 +23,17 @@ classdef PostProcessing < matlab.mixin.SetGet
         %------------------------------------------------------------------
         % Constructor
         %------------------------------------------------------------------
-        function obj = PostProcessing(dataPostProcessing)
-            obj.PHI          = dataPostProcessing.PHI;
-            obj.Permeability = dataPostProcessing.Permeability;
-            obj.ProblemData  = dataPostProcessing.ProblemData;
-            obj.xmlContent   = dataPostProcessing.xmlContent;
-            obj.mappings     = dataPostProcessing.mappings;
-            obj.metrics      = dataPostProcessing.metrics;
-            obj.lines        = dataPostProcessing.lines;
-            obj.points       = dataPostProcessing.points;
-            obj.xi           = dataPostProcessing.xi;
-            obj.elements     = dataPostProcessing.elements;
+        function obj = PostProcessing(G, Pr, PHI)
+            obj.PHI          = PHI;
+            obj.Permeability = Pr.Materials.Permeability;
+            obj.ProblemData  = Pr.ProblemData;
+            obj.xmlContent   = Pr.xmlContent;
+            obj.mappings     = Pr.mappings;
+            obj.metrics      = Pr.metrics;
+            obj.lines        = G.lines;
+            obj.points       = G.points;
+            obj.xi           = G.xi;
+            obj.elements     = G.elements;
             i_node     = obj.ProblemData.inElementVectorLocation;
             e_node     = obj.ProblemData.lineVectorLocation;
             c_node     = obj.ProblemData.pointVectorLocation;
@@ -240,7 +240,7 @@ classdef PostProcessing < matlab.mixin.SetGet
             min_var = 0; max_var = 0;
             for k = 1:Nel
                 min_var = min([min_var min(var{k}(:))]);
-                max_var = min([max_var max(var{k}(:))]);
+                max_var = max([max_var max(var{k}(:))]);
             end
             
             flux_lines = linspace(min_var, max_var, 20);
@@ -248,7 +248,7 @@ classdef PostProcessing < matlab.mixin.SetGet
             % Plot contours
             for k = 1:Nel
             contour(obj.mappings.Xm{k},obj.mappings.Ym{k},...
-                    obj.Potential{k},flux_lines);
+                    var{k},flux_lines);
                
             end
         end
