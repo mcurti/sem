@@ -52,7 +52,7 @@ for k = 1:Nel
 end
 NnodesSum = sum(Nnodes);  % Total number of nodes;
 % SEM to fourier transformation
-[Ic0, Ia, Ib]   = lagrange2fourier_int(x_fourier,w_fourier, Q);
+[Ic0, Ia, Ib]   = lagrange2fourier_int(x_fourier, Q);
 
 Ic0(1) = Ic0(1)+Ic0(end);
 Ia(:,1) = Ia(:,1)+Ia(:,end);

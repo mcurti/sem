@@ -69,7 +69,7 @@ classdef fourierElements
         % Function to evaluate the spatial values of the solution within
         % the defined domain
         [x_grid, y_grid, f_solution] = fourier2space(obj, dx, dy, El)
-
+        
         
         %------------------------------------------------------------------
         % Function to evaluate the spatial values for the derivative of the

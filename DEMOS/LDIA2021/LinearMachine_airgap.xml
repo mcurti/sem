@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Body>
+   <Geometry>
+      <Parameters Nbiron="4" Nd="26" Nd_teeth="41" Nd_teethy="3" Ng="1" Nteethy="6" alpham="2/3"
+                  alphap="9/16"
+                  tauc="16"
+                  taup="12"
+                  y1="5"
+                  y2="9"
+                  y3="10"
+                  y3p="9.9"
+                  y4="20"
+                  y5="25"/>
+      <Points p="40">
+         <point address="0,y3" id="1"/>
+         <point address="tauc*alphap/2,y3" id="2"/>
+         <point address="tauc*alphap/2,y4" id="3"/>
+         <point address="0,y4" id="4"/>
+         <point address="tauc*(1-alphap/2),y3" id="5"/>
+         <point address="tauc*(1-alphap/2),y4" id="6"/>
+         <point address="tauc,y3" id="7"/>
+         <point address="tauc,y4" id="8"/>
+         <point address="tauc*(1+alphap/2),y3" id="9"/>
+         <point address="tauc*(2-alphap/2),y3" id="10"/>
+         <point address="2*tauc,y3" id="11"/>
+         <point address="tauc*(2+alphap/2),y3" id="12"/>
+         <point address="tauc*(3-alphap/2),y3" id="13"/>
+         <point address="3*tauc,y3" id="14"/>
+         <point address="tauc*(1+alphap/2),y4" id="15"/>
+         <point address="tauc*(2-alphap/2),y4" id="16"/>
+         <point address="2*tauc,y4" id="17"/>
+         <point address="tauc*(2+alphap/2),y4" id="18"/>
+         <point address="tauc*(3-alphap/2),y4" id="19"/>
+         <point address="3*tauc,y4" id="20"/>
+         <point address="0,y5" id="21"/>
+         <point address="tauc*alphap/2,y5" id="22"/>
+         <point address="tauc*(1-alphap/2),y5" id="23"/>
+         <point address="tauc,y5" id="24"/>
+         <point address="tauc*(1+alphap/2),y5" id="25"/>
+         <point address="tauc*(2-alphap/2),y5" id="26"/>
+         <point address="2*tauc,y5" id="27"/>
+         <point address="tauc*(2+alphap/2),y5" id="28"/>
+         <point address="tauc*(3-alphap/2),y5" id="29"/>
+         <point address="3*tauc,y5" id="30"/>
+         <point address="0,y3p" id="31"/>
+         <point address="tauc*alphap/2,y3p" id="32"/>
+         <point address="tauc*(1-alphap/2),y3p" id="33"/>
+         <point address="tauc,y3p" id="34"/>
+         <point address="tauc*(1+alphap/2),y3p" id="35"/>
+         <point address="tauc*(2-alphap/2),y3p" id="36"/>
+         <point address="2*tauc,y3p" id="37"/>
+         <point address="tauc*(2+alphap/2),y3p" id="38"/>
+         <point address="tauc*(3-alphap/2),y3p" id="39"/>
+         <point address="3*tauc,y3p" id="40"/>
+      </Points>
+      <Lines l="66">
+         <line connectivity="1,2" degree="Nd" id="1" type="segment"/>
+         <line connectivity="2,3" degree="Nteethy" id="2" type="segment"/>
+         <line connectivity="4,3" degree="Nd" id="3" type="segment"/>
+         <line connectivity="1,4" degree="Nteethy" id="4" type="segment"/>
+         <line connectivity="2,5" degree="Nd_teeth" id="5" type="segment"/>
+         <line connectivity="5,6" degree="Nteethy" id="6" type="segment"/>
+         <line connectivity="3,6" degree="Nd_teeth" id="7" type="segment"/>
+         <line connectivity="5,7" degree="Nd" id="8" type="segment"/>
+         <line connectivity="7,8" degree="Nteethy" id="9" type="segment"/>
+         <line connectivity="6,8" degree="Nd" id="10" type="segment"/>
+         <line connectivity="7,9" degree="Nd" id="11" type="segment"/>
+         <line connectivity="9,10" degree="Nd_teeth" id="12" type="segment"/>
+         <line connectivity="10,11" degree="Nd" id="13" type="segment"/>
+         <line connectivity="11,12" degree="Nd" id="14" type="segment"/>
+         <line connectivity="12,13" degree="Nd_teeth" id="15" type="segment"/>
+         <line connectivity="13,14" degree="Nd" id="16" type="segment"/>
+         <line connectivity="9,15" degree="Nteethy" id="17" type="segment"/>
+         <line connectivity="10,16" degree="Nteethy" id="18" type="segment"/>
+         <line connectivity="11,17" degree="Nteethy" id="19" type="segment"/>
+         <line connectivity="12,18" degree="Nteethy" id="20" type="segment"/>
+         <line connectivity="13,19" degree="Nteethy" id="21" type="segment"/>
+         <line connectivity="14,20" degree="Nteethy" id="22" type="segment"/>
+         <line connectivity="8,15" degree="Nd" id="23" type="segment"/>
+         <line connectivity="15,16" degree="Nd_teeth" id="24" type="segment"/>
+         <line connectivity="16,17" degree="Nd" id="25" type="segment"/>
+         <line connectivity="17,18" degree="Nd" id="26" type="segment"/>
+         <line connectivity="18,19" degree="Nd_teeth" id="27" type="segment"/>
+         <line connectivity="19,20" degree="Nd" id="28" type="segment"/>
+         <line connectivity="4,21" degree="Nbiron" id="29" type="segment"/>
+         <line connectivity="3,22" degree="Nbiron" id="30" type="segment"/>
+         <line connectivity="6,23" degree="Nbiron" id="31" type="segment"/>
+         <line connectivity="8,24" degree="Nbiron" id="32" type="segment"/>
+         <line connectivity="15,25" degree="Nbiron" id="33" type="segment"/>
+         <line connectivity="16,26" degree="Nbiron" id="34" type="segment"/>
+         <line connectivity="17,27" degree="Nbiron" id="35" type="segment"/>
+         <line connectivity="18,28" degree="Nbiron" id="36" type="segment"/>
+         <line connectivity="19,29" degree="Nbiron" id="37" type="segment"/>
+         <line connectivity="20,30" degree="Nbiron" id="38" type="segment"/>
+         <line connectivity="21,22" degree="Nd" id="39" type="segment"/>
+         <line connectivity="22,23" degree="Nd_teeth" id="40" type="segment"/>
+         <line connectivity="23,24" degree="Nd" id="41" type="segment"/>
+         <line connectivity="24,25" degree="Nd" id="42" type="segment"/>
+         <line connectivity="25,26" degree="Nd_teeth" id="43" type="segment"/>
+         <line connectivity="26,27" degree="Nd" id="44" type="segment"/>
+         <line connectivity="27,28" degree="Nd" id="45" type="segment"/>
+         <line connectivity="28,29" degree="Nd_teeth" id="46" type="segment"/>
+         <line connectivity="29,30" degree="Nd" id="47" type="segment"/>
+         <line connectivity="31,1" degree="Ng" id="48" type="segment"/>
+         <line connectivity="32,2" degree="Ng" id="49" type="segment"/>
+         <line connectivity="33,5" degree="Ng" id="50" type="segment"/>
+         <line connectivity="34,7" degree="Ng" id="51" type="segment"/>
+         <line connectivity="35,9" degree="Ng" id="52" type="segment"/>
+         <line connectivity="36,10" degree="Ng" id="53" type="segment"/>
+         <line connectivity="37,11" degree="Ng" id="54" type="segment"/>
+         <line connectivity="38,12" degree="Ng" id="55" type="segment"/>
+         <line connectivity="39,13" degree="Ng" id="56" type="segment"/>
+         <line connectivity="40,14" degree="Ng" id="57" type="segment"/>
+         <line connectivity="31,32" degree="Nd" id="58" type="segment"/>
+         <line connectivity="32,33" degree="Nd_teeth" id="59" type="segment"/>
+         <line connectivity="33,34" degree="Nd" id="60" type="segment"/>
+         <line connectivity="34,35" degree="Nd" id="61" type="segment"/>
+         <line connectivity="35,36" degree="Nd_teeth" id="62" type="segment"/>
+         <line connectivity="36,37" degree="Nd" id="63" type="segment"/>
+         <line connectivity="37,38" degree="Nd" id="64" type="segment"/>
+         <line connectivity="38,39" degree="Nd_teeth" id="65" type="segment"/>
+         <line connectivity="39,40" degree="Nd" id="66" type="segment"/>
+      </Lines>
+      <Elements el="27">
+         <inLines>
+            <line_element connectivity="1,2,3,4" id="1"/>
+            <line_element connectivity="5,6,7,2" id="2"/>
+            <line_element connectivity="8,9,10,6" id="3"/>
+            <line_element connectivity="11,17,23,9" id="4"/>
+            <line_element connectivity="12,18,24,17" id="5"/>
+            <line_element connectivity="13,19,25,18" id="6"/>
+            <line_element connectivity="14,20,26,19" id="7"/>
+            <line_element connectivity="15,21,27,20" id="8"/>
+            <line_element connectivity="16,22,28,21" id="9"/>
+            <line_element connectivity="3,30,39,29" id="10"/>
+            <line_element connectivity="7,31,40,30" id="11"/>
+            <line_element connectivity="10,32,41,31" id="12"/>
+            <line_element connectivity="23,33,42,32" id="13"/>
+            <line_element connectivity="24,34,43,33" id="14"/>
+            <line_element connectivity="25,35,44,34" id="15"/>
+            <line_element connectivity="26,36,45,35" id="16"/>
+            <line_element connectivity="27,37,46,36" id="17"/>
+            <line_element connectivity="28,38,47,37" id="18"/>
+            <line_element connectivity="58,49,1,48" id="19"/>
+            <line_element connectivity="59,50,5,49" id="20"/>
+            <line_element connectivity="60,51,8,50" id="21"/>
+            <line_element connectivity="61,52,11,51" id="22"/>
+            <line_element connectivity="62,53,12,52" id="23"/>
+            <line_element connectivity="63,54,13,53" id="24"/>
+            <line_element connectivity="64,55,14,54" id="25"/>
+            <line_element connectivity="65,56,15,55" id="26"/>
+            <line_element connectivity="66,57,16,56" id="27"/>
+         </inLines>
+         <inPoints>
+            <point_element connectivity="1,2,3,4" id="1"/>
+            <point_element connectivity="2,5,6,3" id="2"/>
+            <point_element connectivity="5,7,8,6" id="3"/>
+            <point_element connectivity="7,9,15,8" id="4"/>
+            <point_element connectivity="9,10,16,15" id="5"/>
+            <point_element connectivity="10,11,17,16" id="6"/>
+            <point_element connectivity="11,12,18,17" id="7"/>
+            <point_element connectivity="12,13,19,18" id="8"/>
+            <point_element connectivity="13,14,20,19" id="9"/>
+            <point_element connectivity="4,3,22,21" id="10"/>
+            <point_element connectivity="3,6,23,22" id="11"/>
+            <point_element connectivity="6,8,24,23" id="12"/>
+            <point_element connectivity="8,15,25,24" id="13"/>
+            <point_element connectivity="15,16,26,25" id="14"/>
+            <point_element connectivity="16,17,27,26" id="15"/>
+            <point_element connectivity="17,18,28,27" id="16"/>
+            <point_element connectivity="18,19,29,28" id="17"/>
+            <point_element connectivity="19,20,30,29" id="18"/>
+            <point_element connectivity="31,32,2,1" id="19"/>
+            <point_element connectivity="32,33,5,2" id="20"/>
+            <point_element connectivity="33,34,7,5" id="21"/>
+            <point_element connectivity="34,35,9,7" id="22"/>
+            <point_element connectivity="35,36,10,9" id="23"/>
+            <point_element connectivity="36,37,11,10" id="24"/>
+            <point_element connectivity="37,38,12,11" id="25"/>
+            <point_element connectivity="38,39,13,12" id="26"/>
+            <point_element connectivity="39,40,14,13" id="27"/>
+         </inPoints>
+      </Elements>
+   </Geometry>
+   <Physics>
+      <PhysicalParameters J="4" Ja="J*cos(phi)" Jb="J*cos(phi-2*pi/3)" Jc="J*cos(phi+2*pi/3)" mu0="1"
+                          phi="20*pi/180"/>
+      <Regions nR="7">
+         <region CurrentDensity="0" ElementList="2,5,8,10,11,12,13,14,15,16,17,18"
+                 MagneticMaterial="mu0*1000"
+                 id="1"
+                 name="Iron"/>
+         <region CurrentDensity="Ja" ElementList="1" MagneticMaterial="mu0" id="2"
+                 name="SourceAp"/>
+         <region CurrentDensity="-Ja" ElementList="3" MagneticMaterial="mu0" id="3"
+                 name="SourceAn"/>
+         <region CurrentDensity="Jb" ElementList="4" MagneticMaterial="mu0" id="4"
+                 name="SourceBp"/>
+         <region CurrentDensity="-Jb" ElementList="6" MagneticMaterial="mu0" id="5"
+                 name="SourceBn"/>
+         <region CurrentDensity="Jc" ElementList="7" MagneticMaterial="mu0" id="6"
+                 name="SourceCp"/>
+         <region CurrentDensity="-Jc" ElementList="9" MagneticMaterial="mu0" id="7"
+                 name="SourceCn"/>
+      </Regions>
+      <BoundaryConditions dir_lines="39,40,41,42,43,44,45,46,47" dir_points="22,23,24,25,26,27,28,29"
+                          periodic_elements="27,9,18"
+                          periodic_lines="57,22,38"
+                          periodic_points="40,14,20,30">
+         <Periodicity_lines>
+            <periodic_line connectivity="16,4,28,21" id="9"/>
+            <periodic_line connectivity="28,29,47,37" id="18"/>
+            <periodic_line connectivity="66,48,16,56" id="27"/>
+         </Periodicity_lines>
+         <Periodicity_points>
+            <periodic_point connectivity="13,1,4,19" id="9"/>
+            <periodic_point connectivity="19,4,21,29" id="18"/>
+            <periodic_point connectivity="39,31,1,13" id="27"/>
+         </Periodicity_points>
+      </BoundaryConditions>
+   </Physics>
+</Body>
